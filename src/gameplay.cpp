@@ -57,9 +57,7 @@ GamePlay::GamePlay()
 {
   m_quit_time = 0;
 
-  // TODO
-  // m_level = new Level(1);
-  m_level = new Level(3);
+  m_level = new Level(1);
   m_player = new Player();
   m_scorer = new Scorer();
 
