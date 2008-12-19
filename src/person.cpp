@@ -1,3 +1,34 @@
+// Defender Of Nothing
+// Copyright (C) 2007 by David A. Capello
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+//
+// * Redistributions of source code must retain the above copyright
+//   notice, this list of conditions and the following disclaimer.
+// * Redistributions in binary form must reproduce the above copyright
+//   notice, this list of conditions and the following disclaimer in
+//   the documentation and/or other materials provided with the
+//   distribution.
+// * Neither the name of the Vaca nor the names of its contributors
+//   may be used to endorse or promote products derived from this
+//   software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+// COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+// OF THE POSSIBILITY OF SUCH DAMAGE.
+
 #include <allegro.h>
 #include "person.hpp"
 #include "util.hpp"
@@ -7,6 +38,8 @@
 #include "media.hpp"
 #include "player.hpp"
 #include "particle.hpp"
+#include "angel.hpp"
+#include "scorer.hpp"
 
 
 #define CALLING_DURATION	(BPS*1.0)
@@ -30,6 +63,7 @@ Person::Person(vector2d pos)
   m_pos = pos;
   m_velx = rand_range(1.0, 2.0);
   m_toast_factor = 0.0;
+  m_abductor = NULL;
 
   set_state(STAND_PERSON);
 }
@@ -91,54 +125,76 @@ void Person::update()
       }
       break;
 
+    case ABDUCTING_PERSON:
+      if (m_abductor != NULL) {
+	m_pos += m_abductor->get_vel() / BPS;
+      }
+      break;
+
+    case FALLING_PERSON:
+      m_pos.y += 2.0 / BPS;
+      if (gameplay->get_level()->touch_floor(m_pos)) {
+	m_pos = gameplay->get_level()->get_stand_point(m_pos);
+	set_state(STAND_PERSON);
+      }
+      break;
+
     case DEAD_PERSON:
       // nothing to do
       break;
   }
 
-  // interaction with the player....
-  Player *player = gameplay->get_player();
-  vector2d player_pos = player->get_pos();
+  if (m_state != ABDUCTING_PERSON) {
+    // interaction with the player....
+    Player *player = gameplay->get_player();
+    vector2d player_pos = player->get_pos();
 
-  // are the player toasting us?
-  double dist = (player_pos - m_pos).magnitude();
-  if (dist < 2.0) {
-    // let's toast this guy
-    m_toast_factor += (2.0-dist)/100.0;
+    // are the player toasting us?
+    double dist = (player_pos - m_pos).magnitude();
+    if (dist < 2.0) {
+      // let's toast this guy
+      m_toast_factor += (2.0-dist)/100.0;
 
-    // add the halo effect to the Devil
-    player->inc_halo(0.05 * (2.0-dist));
+      // add the halo effect to the Devil
+      player->inc_halo(0.05 * (2.0-dist));
 
-    // create toasty effect
-    int c, num = 4 * (2.0-dist);
-    for (c=0; c<num; ++c)
-      gameplay->add_particle
-	(new PixelParticle(m_pos + vector2d(rand_range(-0.2, 0.2),
-					    rand_range(-0.5, 0.0)),
-			   vector2d(0, rand_range(-2.0, -0.1)),
-			   vector2d(0, 0),
-			   rand_range(BPS/4, BPS*3/4),
-			   makecol(255, 255, 0),
-			   makecol(64, 0, 0)));
+      // create toasty effect
+      int c, num = static_cast<int>(4 * (2.0-dist));
+      for (c=0; c<num; ++c)
+	gameplay->add_particle
+	  (new PixelParticle(m_pos + vector2d(rand_range(-0.2, 0.2),
+					      rand_range(-0.5, 0.0)),
+			     vector2d(0, rand_range(-2.0, -0.1)),
+			     vector2d(0, 0),
+			     rand_range(BPS/4, BPS*3/4),
+			     makecol(255, 255, 0),
+			     makecol(64, 0, 0)));
 
-    // is this person completely burned?
-    if (m_toast_factor >= 1.0) {
-      set_state(DEAD_PERSON);
-      burn_completely();
-    }
+      // is this person completely burned?
+      if (m_toast_factor >= 1.0) {
+	GAMEPLAY->get_scorer()->one_to_hell();
+	kill();
+	burn();
+      }
 
-    // go away from devil
-    if (m_right && m_pos.x < player_pos.x) {
-      if (m_state != DEAD_PERSON &&
-	  m_state != WALKING_PERSON)
-	set_state(WALKING_PERSON);
-      m_right = false;
-    }
-    else if (!m_right && m_pos.x > player_pos.x) {
-      if (m_state != DEAD_PERSON &&
-	  m_state != WALKING_PERSON)
-	set_state(WALKING_PERSON);
-      m_right = true;
+      // go away from devil
+      if (m_state == STAND_PERSON ||
+	  m_state == WALKING_PERSON ||
+	  m_state == LOOKING_PERSON ||
+	  m_state == CALLING_PERSON) {
+	if (m_right && m_pos.x < player_pos.x) {
+	  if (m_state != DEAD_PERSON &&
+	      m_state != WALKING_PERSON)
+	    set_state(WALKING_PERSON);
+	  m_right = false;
+	}
+	else if (!m_right && m_pos.x > player_pos.x) {
+	  if (m_state != DEAD_PERSON &&
+	      m_state != WALKING_PERSON)
+	    set_state(WALKING_PERSON);
+	  m_right = true;
+	}
+      }
     }
   }
 }
@@ -172,6 +228,38 @@ vector2d Person::get_pos() const
 }
 
 
+Angel *Person::get_abductor()
+{
+  return m_abductor;
+}
+
+
+void Person::set_abductor(Angel *angel)
+{
+  m_abductor = angel;
+}
+
+
+void Person::catch_person()
+{
+  set_state(ABDUCTING_PERSON);
+}
+
+
+void Person::throw_person()
+{
+  set_state(FALLING_PERSON);
+}
+
+
+void Person::kill()
+{
+  set_state(DEAD_PERSON);
+  if (m_abductor != NULL)
+    m_abductor->set_target(NULL);
+}
+
+
 void Person::set_state(PersonState state)
 {
   m_state = state;
@@ -179,7 +267,8 @@ void Person::set_state(PersonState state)
 }
 
 
-void Person::burn_completely()
+// converts a dead person in black particles
+void Person::burn()
 {
   GamePlay *gameplay = GAMEPLAY;
   BITMAP *sprite = prepare_sprite();
@@ -252,6 +341,14 @@ BITMAP *Person::prepare_sprite()
 	ani_frame = ANI_FRAME_HELP1;
       break;
     }
+      
+    case ABDUCTING_PERSON:
+      ani_frame = ANI_FRAME_HELP3;
+      break;
+
+    case FALLING_PERSON:
+      ani_frame = ANI_FRAME_HELP2;
+      break;
 
     case DEAD_PERSON:
       // impossible to be here
@@ -268,7 +365,8 @@ BITMAP *Person::prepare_sprite()
        0, 0, TILE_W, TILE_H);
 
   lit_mode(0, 0, 0);
-  draw_lit_sprite(person_bmp, person_bmp, 0, 0, 255 * m_toast_factor);
+  draw_lit_sprite(person_bmp, person_bmp, 0, 0,
+		  static_cast<int>(255 * m_toast_factor));
   solid_mode();
 
   return person_bmp;

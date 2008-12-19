@@ -1,3 +1,34 @@
+// Defender Of Nothing
+// Copyright (C) 2007 by David A. Capello
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+//
+// * Redistributions of source code must retain the above copyright
+//   notice, this list of conditions and the following disclaimer.
+// * Redistributions in binary form must reproduce the above copyright
+//   notice, this list of conditions and the following disclaimer in
+//   the documentation and/or other materials provided with the
+//   distribution.
+// * Neither the name of the Vaca nor the names of its contributors
+//   may be used to endorse or promote products derived from this
+//   software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+// COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+// OF THE POSSIBILITY OF SUCH DAMAGE.
+
 #include <cstdlib>
 #include <ctime>
 #include <allegro.h>
@@ -48,7 +79,10 @@ int main()
 
   override_config_file(redir("defnot.ini").c_str());
 
-  if (!setup_gfx(get_config_int("Game", "Widescreen", 0) != 0)) {
+  gfx_widescreen = get_config_int("Game", "Widescreen", gfx_widescreen);
+  gfx_fullscreen = get_config_int("Game", "Fullscreen", gfx_fullscreen);
+  
+  if (!setup_gfx() != 0) {
     allegro_message("Unable to setup the graphics mode\n");
     return 1;
   }
@@ -80,7 +114,8 @@ int main()
   // play the game
   game_loop();
 
-  set_config_int("Game", "Widescreen", GFX_W == 360);
+  set_config_int("Game", "Widescreen", gfx_widescreen);
+  set_config_int("Game", "Fullscreen", gfx_fullscreen);
   
   remove_int(timer_control);
   allegro_exit();
@@ -116,20 +151,17 @@ static void game_loop()
     vsync();
     stretch_blit(buffer, screen, 0, 0, GFX_W, GFX_H, 0, 0, SCREEN_W, SCREEN_H);
 
-    // screen shot
-    if (key[KEY_F12]) {
-      int old_beats = beats;
-      make_screenshot(buffer);
-      do {
-	poll_keyboard();
-      } while (key[KEY_F12]);
-      beats = old_beats;
-    }
-
     // switch graphics mode
-    if (key[KEY_F11]) {
+    if (key[KEY_F11] || gfx_switched) {
       int old_beats = beats;
-      switch_gfx_mode();
+
+      if (!gfx_switched) {
+	gfx_widescreen = !gfx_widescreen;
+      }
+      else {
+	gfx_switched = false;
+      }
+      switch_widescreen();
 
       destroy_bitmap(buffer);
       buffer = create_bitmap(GFX_W, GFX_H);
@@ -137,6 +169,16 @@ static void game_loop()
       do {
 	poll_keyboard();
       } while (key[KEY_F11]);
+      beats = old_beats;
+    }
+
+    // screen shot
+    if (key[KEY_F12]) {
+      int old_beats = beats;
+      make_screenshot(buffer);
+      do {
+	poll_keyboard();
+      } while (key[KEY_F12]);
       beats = old_beats;
     }
   }

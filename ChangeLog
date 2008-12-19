@@ -1,7 +1,11 @@
-2007-09-16  David A. Capello  <dacap@users.sourceforge.net>  11:01 a.m.
+2007-09-17  David A. Capello  <dacap@users.sourceforge.net>  12:48 a.m.
 
-	* Let's make some AI.
-	* Renamed "bedevil" -> "defnot"
+        * Finished the angels abducting, levels, final, backgrounds, etc.
+
+2007-09-16  David A. Capello  <dacap@users.sourceforge.net>  08:46 p.m.
+
+	* Added menu and options to change widescreen/fullscreen.
+	* src/sprite.cpp: Added to make pixel-collision for sprites.
 
 2007-09-16  David A. Capello  <dacap@users.sourceforge.net>  02:06 a.m.
 

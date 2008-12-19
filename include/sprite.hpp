@@ -29,39 +29,29 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef GAME_HPP
-#define GAME_HPP
-
-#include "gfx.hpp"
-#include "gamestate.hpp"
+#ifndef SPRITE_HPP
+#define SPRITE_HPP
 
 
-// game speed (beats per second)
-#define BPS	60
-
-// game time
-#define GAME_T	(the_game->get_time())
-
-
-// the game
-class Game
+class Sprite
 {
-  int m_time;
-  GameState *m_state;
-
 public:
-  void start();
-  int get_time();
+  BITMAP *bmp;
+  int x, y;
+  bool h_flip : 1;
+  bool v_flip : 1;
 
-  bool update();
+  Sprite(BITMAP *bmp, int x, int y, int h_flip = false, int v_flip = false);
+  virtual ~Sprite();
+
   void draw(BITMAP *bmp);
 
-  GameState *get_state();
+  int flip_x(int u);
+  int flip_y(int v);
+
+  bool collision(int u, int v);
+  bool collision(Sprite &spr);
 };
 
 
-// the current game
-extern Game *the_game;
-
-
-#endif // GAME_HPP
+#endif

@@ -29,39 +29,25 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef GAME_HPP
-#define GAME_HPP
+#ifndef FINAL_HPP
+#define FINAL_HPP
 
-#include "gfx.hpp"
+
 #include "gamestate.hpp"
 
 
-// game speed (beats per second)
-#define BPS	60
-
-// game time
-#define GAME_T	(the_game->get_time())
-
-
-// the game
-class Game
+class Final : public GameState
 {
-  int m_time;
-  GameState *m_state;
-
+  int m_final_time;
+  bool m_enter_pressed;
+  
 public:
-  void start();
-  int get_time();
+  Final();
+  virtual ~Final();
 
-  bool update();
+  GameState *update();
   void draw(BITMAP *bmp);
-
-  GameState *get_state();
 };
 
 
-// the current game
-extern Game *the_game;
-
-
-#endif // GAME_HPP
+#endif // FINAL_HPP

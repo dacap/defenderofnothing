@@ -33,8 +33,7 @@
 CC = gcc
 CXX = g++
 LD = g++
-# CFLAGS = -Iinclude -O3 -s -W -Wall
-CFLAGS = -Iinclude -O3 -g -W -Wall
+CFLAGS = -Iinclude -O3 -s -W -Wall
 
 # Add-on libraries go here
 ifdef STATICLINK
@@ -48,11 +47,11 @@ ifndef NAME
 	NAME = defnot
 endif
 
-# ifndef WINDOWS
-# ifdef MINGDIR
+ifndef WINDOWS
+ifdef MINGDIR
 	WINDOWS = 1
-# endif
-# endif
+endif
+endif
 
 ifdef WINDOWS
 	RM = del /q

@@ -29,39 +29,44 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef GAME_HPP
-#define GAME_HPP
-
-#include "gfx.hpp"
-#include "gamestate.hpp"
-
-
-// game speed (beats per second)
-#define BPS	60
-
-// game time
-#define GAME_T	(the_game->get_time())
+#include <allegro.h>
+#include "final.hpp"
+#include "game.hpp"
+#include "menu.hpp"
 
 
-// the game
-class Game
+Final::Final()
 {
-  int m_time;
-  GameState *m_state;
-
-public:
-  void start();
-  int get_time();
-
-  bool update();
-  void draw(BITMAP *bmp);
-
-  GameState *get_state();
-};
+  m_final_time = GAME_T;
+  m_enter_pressed = false;
+}
 
 
-// the current game
-extern Game *the_game;
+Final::~Final()
+{
+}
 
 
-#endif // GAME_HPP
+GameState *Final::update()
+{
+  if (key[KEY_ENTER]) {
+    m_enter_pressed = true;
+  }
+  else if (m_enter_pressed) {
+    return new Menu();
+  }
+
+  return this;
+}
+
+
+void Final::draw(BITMAP *bmp)
+{
+  clear_bitmap(bmp);
+  draw_text(bmp, 0, 0*12, makecol(255, 255, 255), "This is the final. Are you disappointed? So I am.");
+//   draw_text(bmp, 0, 1*12, makecol(255, 255, 255), "You kill %d angels", 0);
+//   draw_text(bmp, 0, 3*12, makecol(255, 255, 255), "You kill %d humans", 0);
+//   draw_text(bmp, 0, 4*12, makecol(255, 255, 255), "You save %d humans", 0);
+//   draw_text(bmp, 0, 5*12, makecol(255, 255, 255), "You shoot %d times", 0);
+//   draw_text(bmp, 0, 7*12, makecol(255, 255, 255), "Average of kills/shoots: %3.02f", 0.0);
+}

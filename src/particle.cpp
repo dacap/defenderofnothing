@@ -1,3 +1,34 @@
+// Defender Of Nothing
+// Copyright (C) 2007 by David A. Capello
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+//
+// * Redistributions of source code must retain the above copyright
+//   notice, this list of conditions and the following disclaimer.
+// * Redistributions in binary form must reproduce the above copyright
+//   notice, this list of conditions and the following disclaimer in
+//   the documentation and/or other materials provided with the
+//   distribution.
+// * Neither the name of the Vaca nor the names of its contributors
+//   may be used to endorse or promote products derived from this
+//   software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+// COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+// OF THE POSSIBILITY OF SUCH DAMAGE.
+
 #include <allegro.h>
 #include "particle.hpp"
 #include "util.hpp"
@@ -5,6 +36,7 @@
 #include "game.hpp"
 #include "gameplay.hpp"
 #include "angel.hpp"
+#include "sprite.hpp"
 
 
 Particle::Particle(vector2d pos, vector2d vel, vector2d acc,
@@ -76,9 +108,10 @@ void PixelParticle::draw(BITMAP *bmp)
 //////////////////////////////////////////////////////////////////////
 
 
-Fire::Fire(vector2d pos, vector2d vel, int size)
+Fire::Fire(vector2d pos, vector2d vel, int size, double energy)
   : Particle(pos, vel, vector2d(0, 0), BPS*60)
   , m_size(size)
+  , m_energy(energy)
 {
 }
 
@@ -117,13 +150,35 @@ void Fire::update()
   }
 
   // hit an angel
+  int x, y;
+  level->to_screen(m_pos, x, y);
+
   ObjectList angels = gameplay->get_angels();
   ObjectList::const_iterator it;
   for (it = angels.begin(); it != angels.end(); ++it) {
     Angel *angel = static_cast<Angel *>(*it);
-    if ((angel->get_pos() - m_pos).magnitude() < 1.0) {
-//       GAMEPLAY->add_particles(PixelParticle::generate_from_bitmap());
-      angel->kill();
+
+    if (angel->is_hittable()) {
+      Sprite *sprite, *wings;
+      angel->get_sprites(sprite, wings);
+      if (sprite != NULL) {
+	if (sprite->collision(x-m_size, y) ||
+	    sprite->collision(x+m_size, y) ||
+	    sprite->collision(x, y-m_size) ||
+	    sprite->collision(x, y-m_size)) {
+	  double angel_energy = angel->get_energy();
+
+	  angel->hit(m_vel, m_energy);
+	  this->hit(angel_energy);
+	}
+
+	if (wings != NULL)
+	  delete wings;
+	delete sprite;
+
+	if (is_dead())
+	  break;
+      }
     }
   }
 }
@@ -143,3 +198,32 @@ void Fire::draw(BITMAP *bmp)
   y += rand_range(-1, 1);
   circlefill(bmp, x, y, m_size-1, makecol(255, 255, 0));
 }
+
+
+void Fire::hit(double energy)
+{
+  m_energy -= energy;
+  if (m_energy < 0.0) {
+    impact();
+    kill();
+  }
+}
+
+
+void Fire::impact()
+{
+  for (int c=0; c<40; ++c) {
+    double angle = rand_range(-AL_PI, AL_PI);
+    double vel = rand_range(7.0, 8.2);
+
+    GAMEPLAY->add_particle
+      (new PixelParticle(m_pos,
+			 vector2d(vel*cos(angle),
+				  vel*sin(angle)),
+			 vector2d(0, 0),
+			 rand_range(BPS/4, BPS/2),
+			 makecol(128, 0, 0),
+			 makecol(255, 255, 0)));
+  }
+}
+
