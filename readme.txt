@@ -9,7 +9,7 @@ This game is INCOMPLETE
  Tools and Libraries Used
 -----------------------------------------------------------------------
 
- Compiler/IDE: Emacs, MinGW (GCC), make
+ Compiler/IDE: Emacs, MinGW (GCC), make, Allegro Sprite Editor
 
  Platform: Windows
 
