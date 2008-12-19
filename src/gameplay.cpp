@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -33,23 +33,21 @@
 #include <iterator>
 #include <algorithm>
 #include <allegro.h>
-#include "gfx.hpp"
-#include "game.hpp"
-#include "gameplay.hpp"
-#include "player.hpp"
-#include "level.hpp"
-#include "util.hpp"
-#include "particle.hpp"
-#include "person.hpp"
-#include "scorer.hpp"
-#include "angel.hpp"
-#include "sprite.hpp"
-#include "final.hpp"
-#include "menu.hpp"
-
+#include "gfx.h"
+#include "game.h"
+#include "gameplay.h"
+#include "player.h"
+#include "level.h"
+#include "util.h"
+#include "particle.h"
+#include "person.h"
+#include "scorer.h"
+#include "angel.h"
+#include "sprite.h"
+#include "final.h"
+#include "menu.h"
 
 #define MENU_FADEIN_DURATION (BPS/4.0)
-
 
 GamePlay::GamePlay()
   : m_esc(KEY_ESC)
@@ -59,7 +57,9 @@ GamePlay::GamePlay()
 {
   m_quit_time = 0;
 
-  m_level = new Level(1);
+  // TODO
+  // m_level = new Level(1);
+  m_level = new Level(3);
   m_player = new Player();
   m_scorer = new Scorer();
 
@@ -69,7 +69,6 @@ GamePlay::GamePlay()
 
   start_level();
 }
-
 
 GamePlay::~GamePlay()
 {
@@ -83,7 +82,6 @@ GamePlay::~GamePlay()
       delete (*it);
   }
 }
-
 
 GameState *GamePlay::update()
 {
@@ -145,7 +143,6 @@ GameState *GamePlay::update()
   return this;
 }
 
-
 void GamePlay::draw(BITMAP *bmp)
 {
   // draw the game
@@ -156,49 +153,41 @@ void GamePlay::draw(BITMAP *bmp)
     draw_menu(bmp);
 }
 
-
 Level *GamePlay::get_level()
 {
   return m_level;
 }
-
 
 Player *GamePlay::get_player()
 {
   return m_player;
 }
 
-
 Scorer *GamePlay::get_scorer()
 {
   return m_scorer;
 }
 
-
-const ObjectList &GamePlay::get_people()
+const ObjectList &GamePlay::get_people() const
 {
   return m_layers[PEOPLE_LAYER];
 }
 
-
-const ObjectList &GamePlay::get_angels()
+const ObjectList &GamePlay::get_angels() const
 {
   return m_layers[ANGELS_LAYER];
 }
-
 
 void GamePlay::add_particle(Particle *particle)
 {
   m_layers[PARTICLES_LAYER].push_back(particle);
 }
 
-
 void GamePlay::add_particles(std::list<Particle *> particles)
 {
   std::copy(particles.begin(), particles.end(),
 	    std::back_inserter(m_layers[PARTICLES_LAYER]));
 }
-
 
 void GamePlay::add_particles_from_sprite(Sprite *sprite,
 					 vector2d velmin, vector2d velmax,
@@ -231,39 +220,34 @@ void GamePlay::add_particles_from_sprite(Sprite *sprite,
   }
 }
 
-
 void GamePlay::add_person(Person *person)
 {
   m_layers[PEOPLE_LAYER].push_back(person);
 }
-
 
 void GamePlay::add_angel(Angel *angel)
 {
   m_layers[ANGELS_LAYER].push_back(angel);
 }
 
-
 void GamePlay::update_layers()
 {
-  ObjectList::iterator it, end, next;
+  ObjectList::iterator it, end;
   int num;
 
   for (num=0; num<MAX_LAYERS; ++num) {
     end = m_layers[num].end();
-    for (it = m_layers[num].begin(); it != end; it = next) {
-      next = it;
-      ++next;
-
+    for (it = m_layers[num].begin(); it != end; ) {
       (*it)->update();
       if ((*it)->is_dead()) {
 	delete (*it);
-	m_layers[num].erase(it);
+	it = m_layers[num].erase(it);
       }
+      else
+        ++it;
     }
   }
 }
-
 
 void GamePlay::draw_layers(BITMAP *bmp)
 {
@@ -276,7 +260,6 @@ void GamePlay::draw_layers(BITMAP *bmp)
       (*it)->draw(bmp);
   }
 }
-
 
 void GamePlay::draw_menu(BITMAP *bmp)
 {
@@ -293,7 +276,6 @@ void GamePlay::draw_menu(BITMAP *bmp)
   Menu::draw_item(bmp, 30+32, 32+12, "yes", (m_selected == 1));
 }
 
-
 void GamePlay::start_level()
 {
   for (int c=0; c<16*m_level->get_num(); ++c)
@@ -303,4 +285,3 @@ void GamePlay::start_level()
   m_scorer->reset(m_level->get_angels_to_generate(),
 		  get_people().size());
 }
-

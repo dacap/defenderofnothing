@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -31,17 +31,15 @@
 
 #include <cmath>
 #include <allegro.h>
-#include "level.hpp"
-#include "gfx.hpp"
-#include "util.hpp"
-#include "media.hpp"
-#include "game.hpp"
-#include "gameplay.hpp"
-#include "angel.hpp"
-
+#include "level.h"
+#include "gfx.h"
+#include "util.h"
+#include "media.h"
+#include "game.h"
+#include "gameplay.h"
+#include "angel.h"
 
 #define LOOK_AT_DURATION  (BPS*2)
-
 
 Level::Level(int num)
 {
@@ -94,11 +92,9 @@ Level::Level(int num)
     }
 }
 
-
 Level::~Level()
 {
 }
-
 
 void Level::update()
 {
@@ -123,7 +119,6 @@ void Level::update()
     }
   }
 }
-
 
 void Level::draw(BITMAP *bmp)
 {
@@ -151,7 +146,10 @@ void Level::draw(BITMAP *bmp)
   for (y=y1; y<=y2; ++y) {
     outx = static_cast<int>(-std::fmod(std::floor(m_scroll.x), TILE_W));
     for (x=x1; x<=x2; ++x) {
-      Tile bg = m_tiles_bg[y*m_h+x];
+      if (x < 0 || x >= m_w ||
+	  y < 0 || y >= m_h) break;
+
+      Tile bg = m_tiles_bg[y*m_w+x];
       Tile fg = m_tiles_fg[y*m_w+x];
 
       Level::draw_tile(bmp, bg, outx, outy);
@@ -162,42 +160,35 @@ void Level::draw(BITMAP *bmp)
   }
 }
 
-
 bool Level::is_dead()
 {
   return m_is_old;
 }
-
 
 bool Level::is_finished()
 {
   return m_angels_to_generate == 0 && GAMEPLAY->get_angels().empty();
 }
 
-
 int Level::get_num()
 {
   return m_num;
 }
-
 
 int Level::get_w()
 {
   return m_w;
 }
 
-
 int Level::get_h()
 {
   return m_h;
 }
 
-
 vector2d Level::get_start_pos()
 {
   return vector2d(m_w/2.0, m_h-LEVEL_CY);
 }
-
 
 vector2d Level::get_random_pos_for_people()
 {
@@ -213,12 +204,10 @@ vector2d Level::get_random_pos_for_people()
   return positions[rand_range(0, positions.size()-1)];
 }
 
-
 vector2d Level::get_random_pos_for_angel()
 {
   return vector2d(rand_range(0.5, m_w-0.5), -1.5);
 }
-
 
 // tries to look at the specified center
 void Level::look_at(vector2d center)
@@ -238,13 +227,11 @@ void Level::look_at(vector2d center)
   m_look_to = center;
 }
 
-
 void Level::to_screen(vector2d pos, int &x, int &y)
 {
   x = static_cast<int>(-m_scroll.x + pos.x*TILE_W);
   y = static_cast<int>(-m_scroll.y + pos.y*TILE_H);
 }
-
 
 vector2d Level::to_level(int x, int y)
 {
@@ -252,26 +239,23 @@ vector2d Level::to_level(int x, int y)
 		  1.0 * (y + m_scroll.y) / TILE_H);
 }
 
-
 bool Level::touch_floor(vector2d pos)
 {
   int x = static_cast<int>(std::floor(pos.x));
   int y = static_cast<int>(std::floor(pos.y));
   return (x >= 0 && x < m_w &&
-	  y >= 0 && y < m_w &&
+	  y >= 0 && y < m_h &&
 	  Level::tile_is_floor(m_tiles_fg[y*m_w+x]));
 }
-
 
 bool Level::touch_wall(vector2d pos)
 {
   int x = static_cast<int>(pos.x);
   int y = static_cast<int>(pos.y);
   return (x >= 0 && x < m_w &&
-	  y >= 0 && y < m_w &&
+	  y >= 0 && y < m_h &&
 	  Level::tile_is_touchable(m_tiles_fg[y*m_w+x]));
 }
-
 
 vector2d Level::get_stand_point(vector2d pos)
 {
@@ -282,36 +266,30 @@ vector2d Level::get_stand_point(vector2d pos)
   return pos;
 }
 
-
 double Level::get_max_distance_to_abduct()
 {
   return m_max_dist_to_abduct;
 }
-
 
 double Level::get_min_angel_energy()
 {
   return m_min_angel_energy;
 }
 
-
 double Level::get_max_angel_energy()
 {
   return m_max_angel_energy;
 }
-
 
 int Level::get_angels_to_generate()
 {
   return m_angels_to_generate;
 }
 
-
 void Level::set_old()
 {
   m_is_old = true;
 }
-
 
 void Level::set_scroll(vector2d pos)
 {
@@ -322,13 +300,11 @@ void Level::set_scroll(vector2d pos)
   m_scroll = pos;
 }
 
-
 void Level::get_first_visible_tile(int &x, int &y)
 {
   x = static_cast<int>(std::floor(m_scroll.x) / TILE_W);
   y = static_cast<int>(std::floor(m_scroll.y) / TILE_H);
 }
-
 
 void Level::set_tiles_size(int w, int h)
 {
@@ -338,14 +314,12 @@ void Level::set_tiles_size(int w, int h)
   m_tiles_bg.resize(w*h);
 }
 
-
 void Level::draw_tile(BITMAP *bmp, Tile tile, int x, int y)
 {
   if (tile != TILE_NOTHING)
     masked_blit(MEDIA_BITMAP(TILES_PCX), bmp,
 		tile*TILE_W, 0, x, y, TILE_W, TILE_H);
 }
-
 
 bool Level::tile_is_floor(Tile tile)
 {
@@ -354,9 +328,7 @@ bool Level::tile_is_floor(Tile tile)
     tile == TILE_FLOOR_INTERN;
 }
 
-
 bool Level::tile_is_touchable(Tile tile)
 {
   return tile != TILE_NOTHING;
 }
-

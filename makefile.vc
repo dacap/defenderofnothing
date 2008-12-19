@@ -1,0 +1,92 @@
+#######################################################################
+#
+# Instructions:
+#
+# make
+#   Compiles all .c and .cpp files in the src directory to .obj
+#   files in the obj directory, and links them into an
+#   executable named 'game' or 'game.exe' in the currect directory.
+#
+# make clean
+#   Removes all .o files from the obj directory.
+#
+# make veryclean
+#   Removes all .o files and the game executable.
+#
+# Optional parameters:
+#
+# STATICLINK=1
+#   Compiles/removes a statically linked version of the game without
+#   DLL dependencies. The static object files are put in obj/static
+#   and the executable has '_static' appended to the name.
+#
+# NAME=game_name
+#   Sets the name of the game executable. By default the game
+#   executable is called 'game' or 'game.exe'.
+#
+# If you use add-on libraries, add them to the lines starting with
+# 'LIBS='. Make sure you enter the libraries in both lines, for the
+# normal and static version!
+#
+#######################################################################
+
+CC = cl
+CXX = cl
+LD = link
+CFLAGS = -nologo -Iinclude -W1 -Gd -EHa -Zi -MDd
+
+# Add-on libraries go here
+ifdef STATICLINK
+	LIBS =
+else
+	LIBS =
+endif
+
+
+ifndef NAME
+	NAME = defnot
+endif
+
+RM = del /q
+LFLAGS = -nologo -subsystem:windows -machine:x86 -debug
+ifdef STATICLINK
+	CFLAGS += -DSTATICLINK
+	LIBS += alleg_s.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib ole32.lib \
+	        dinput.lib ddraw.lib dxguid.lib winmm.lib dsound.lib
+	OBJDIR = obj/static
+	BIN = $(NAME)_static.exe
+else
+	LIBS += alleg.lib
+	OBJDIR = obj
+	BIN = $(NAME).exe
+endif
+
+OBJ_CPP := $(addprefix $(OBJDIR)/, $(subst src/,,$(patsubst %.cpp,%.obj,$(wildcard src/*.cpp))))
+OBJ_C := $(addprefix $(OBJDIR)/, $(subst src/,,$(patsubst %.c,%.obj,$(wildcard src/*.c))))
+
+all: game
+
+$(OBJDIR)/%.obj: src/%.c
+	$(CC) $(CFLAGS) -Fo$@ -c $<
+
+$(OBJDIR)/%.obj: src/%.cpp
+	$(CXX) $(CFLAGS) -Fo$@ -c $<
+
+game: $(OBJ_C) $(OBJ_CPP)
+	$(LD) $(LFLAGS) $(OBJ_C) $(OBJ_CPP) $(LIBS) -OUT:$(BIN)
+
+clean:
+ifneq ($(OBJ_C),)
+	-$(RM) $(subst /,\,$(OBJ_C))
+endif
+ifneq ($(OBJ_CPP),)
+	-$(RM) $(subst /,\,$(OBJ_CPP))
+endif
+
+veryclean: clean
+	-$(RM) $(BIN)
+
+depend:
+	gcc -MM $(CFLAGS) src/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)|obj/\1|' > makefile.dep
+
+-include makefile.dep

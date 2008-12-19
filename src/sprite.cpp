@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -30,8 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <allegro.h>
-#include "sprite.hpp"
-
+#include "sprite.h"
 
 Sprite::Sprite(BITMAP *bmp, int x, int y, int h_flip, int v_flip)
   : bmp(bmp)
@@ -41,11 +40,9 @@ Sprite::Sprite(BITMAP *bmp, int x, int y, int h_flip, int v_flip)
 {
 }
 
-
 Sprite::~Sprite()
 {
 }
-
 
 void Sprite::draw(BITMAP *bmp)
 {
@@ -61,18 +58,15 @@ void Sprite::draw(BITMAP *bmp)
     draw_sprite(bmp, this->bmp, x, y);
 }
 
-
 int Sprite::flip_x(int u)
 {
   return !h_flip ? u: bmp->w-1-u;
 }
 
-
 int Sprite::flip_y(int v)
 {
   return !v_flip ? v: bmp->h-1-v;
 }
-
 
 bool Sprite::collision(int u, int v)
 {
@@ -81,7 +75,6 @@ bool Sprite::collision(int u, int v)
   else
     return getpixel(bmp, u-x, v-y) != bitmap_mask_color(bmp);
 }
-
 
 bool Sprite::collision(Sprite &spr)
 {
@@ -106,7 +99,6 @@ bool Sprite::collision(Sprite &spr)
     return false;
   }
 }
-
 
 #if 0 				// a test
 #include "gfx.hpp"

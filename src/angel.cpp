@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -30,19 +30,18 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <allegro.h>
-#include "angel.hpp"
-#include "game.hpp"
-#include "gameplay.hpp"
-#include "level.hpp"
-#include "util.hpp"
-#include "media.hpp"
-#include "person.hpp"
-#include "sprite.hpp"
-#include "scorer.hpp"
-
+#include <assert.h>
+#include "angel.h"
+#include "game.h"
+#include "gameplay.h"
+#include "level.h"
+#include "util.h"
+#include "media.h"
+#include "person.h"
+#include "sprite.h"
+#include "scorer.h"
 
 #define WING_CYCLE_DURATION	(BPS*1.0)
-
 
 Angel::Angel(vector2d pos)
 {
@@ -54,11 +53,9 @@ Angel::Angel(vector2d pos)
   set_state(INTRO_ANGEL);
 }
 
-
 Angel::~Angel()
 {
 }
-
 
 void Angel::update()
 {
@@ -94,9 +91,8 @@ void Angel::update()
 	  Person *target = find_target_person();
 	  if (target != NULL) {
 	    set_state(FLYTOPERSON_ANGEL);
-
-	    set_target(target);
-	    target->set_abductor(this);
+	    m_target = target;
+	    m_target->set_abductor(this);
 
 	    m_vel = calculate_vel_to_abduct();
 	    m_right = (m_vel.x >= 0.0);
@@ -126,6 +122,7 @@ void Angel::update()
       if (GAME_T - m_state_time > BPS*0.1) {
 	if (m_energy < 0.0) {
 	  GAMEPLAY->get_scorer()->one_to_killed_angel();
+	  burn();
 	  kill();
 	}
 	else {
@@ -181,13 +178,14 @@ void Angel::update()
     vector2d v = ((m_target->get_pos() - vector2d(0, -2.0)) - m_pos);
 
     if (ABS(v.x) < 1.5 && v.magnitude() < d) {
-      set_state(ABDUCTING_ANGEL);
-      m_target->catch_person();
+      if (m_state != ABDUCTING_ANGEL) {
+	set_state(ABDUCTING_ANGEL);
+	m_target->catch_person();
+      }
     }
 
     if (m_target->get_pos().y < 0.0) {
       m_target->kill();		// kill this person
-      m_target = NULL;
       set_state(FLOATING_ANGEL);
 
       GAMEPLAY->get_scorer()->one_to_heaven();
@@ -199,7 +197,6 @@ void Angel::update()
 //   ABDUCTING_ANGEL,
 //   DEAD_ANGEL
 }
-
 
 void Angel::draw(BITMAP *bmp)
 {
@@ -238,12 +235,10 @@ void Angel::draw(BITMAP *bmp)
   }
 }
 
-
 bool Angel::is_dead()
 {
   return m_state == DEAD_ANGEL;
 }
-
 
 bool Angel::is_hittable()
 {
@@ -257,12 +252,11 @@ bool Angel::is_hittable()
     m_state == ABDUCTING_ANGEL;
 }
 
-
 void Angel::hit(vector2d vel, double energy)
 {
   if (m_state == ABDUCTING_ANGEL && m_target != NULL) {
     m_target->throw_person();
-    set_target(NULL);
+    m_target = NULL;
   }
 
   set_state(HIT_ANGEL);
@@ -272,33 +266,41 @@ void Angel::hit(vector2d vel, double energy)
   m_right = vel.x < 0.0 ? true: false; // it's inverted
 }
 
-
 void Angel::kill()
 {
-  burn();
+  if (m_target != NULL) {
+    m_target->fire_event_angel_die(this);
+    m_target = NULL;
+  }
   set_state(DEAD_ANGEL);
-  if (m_target != NULL)
-    m_target->set_abductor(NULL);
 }
 
+void Angel::fire_event_person_die(Person *person)
+{
+  // did the target of this angel die?
+  if (m_target == person) {
+    m_target = NULL;
+
+    if (m_state == FLYTOPERSON_ANGEL ||
+	m_state == ABDUCTING_ANGEL)
+      set_state(FLYTOANYWHERE_ANGEL);
+  }
+}
 
 vector2d Angel::get_pos() const
 {
   return m_pos;
 }
 
-
 vector2d Angel::get_vel() const
 {
   return m_vel;
 }
 
-
 double Angel::get_energy() const
 {
   return m_energy;
 }
-
 
 void Angel::get_sprites(Sprite *&sprite, Sprite *&wings_sprite)
 {
@@ -373,19 +375,11 @@ void Angel::get_sprites(Sprite *&sprite, Sprite *&wings_sprite)
   wings_sprite = new Sprite(wings_bmp, u, v, sprite->h_flip);
 }
 
-
-void Angel::set_target(Person *person)
-{
-  m_target = person;
-}
-
-
 void Angel::set_state(AngelState state)
 {
   m_state = state;
   m_state_time = GAME_T;
 }
-
 
 void Angel::burn()
 {
@@ -413,17 +407,16 @@ void Angel::burn()
   }
 }
 
-
 Person *Angel::find_target_person()
 {
   Person *target = NULL;
   double target_dist = 1000.0;
   
-  ObjectList people = GAMEPLAY->get_people();
+  const ObjectList& people = GAMEPLAY->get_people();
   ObjectList::const_iterator it;
   for (it = people.begin(); it != people.end(); ++it) {
     Person *person = static_cast<Person *>(*it);
-    if (person->get_abductor() == NULL) {
+    if (person->get_abductor() == NULL && !person->is_dead()) {
       double dist = (person->get_pos() - m_pos).magnitude();
 
       if (target_dist > dist) {
@@ -436,13 +429,13 @@ Person *Angel::find_target_person()
   return target;
 }
 
-
 vector2d Angel::calculate_vel_to_abduct()
 {
+  assert(m_target != NULL);
+
   double vel = rand_range(3.0, 4.0);
   return vel * ((m_target->get_pos() - vector2d(0, -2.0)) - m_pos).normalize();
 }
-
 
 Level *Angel::level()
 {

@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -32,11 +32,10 @@
 #include <cstdlib>
 #include <ctime>
 #include <allegro.h>
-#include "game.hpp"
-#include "media.hpp"
-#include "input.hpp"
-#include "util.hpp"
-
+#include "game.h"
+#include "media.h"
+#include "input.h"
+#include "util.h"
 
 //////////////////////////////////////////////////////////////////////
 // a timer to control that beats increments 60 times per second
@@ -49,7 +48,6 @@ static void timer_control()
 }
 END_OF_STATIC_FUNCTION(timer_control);
 
-
 //////////////////////////////////////////////////////////////////////
 // routine to be called when the close button of the window is pressed
 
@@ -60,7 +58,6 @@ static void close_button()
   continuing = false;
 }
 END_OF_STATIC_FUNCTION(close_button);
-
 
 //////////////////////////////////////////////////////////////////////
 // the entry point of the game
@@ -123,7 +120,6 @@ int main()
 }
 
 END_OF_MAIN();
-
 
 //////////////////////////////////////////////////////////////////////
 // all the game loop (intro/menu/game/etc.)

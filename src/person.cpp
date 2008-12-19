@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -30,20 +30,19 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <allegro.h>
-#include "person.hpp"
-#include "util.hpp"
-#include "game.hpp"
-#include "gameplay.hpp"
-#include "level.hpp"
-#include "media.hpp"
-#include "player.hpp"
-#include "particle.hpp"
-#include "angel.hpp"
-#include "scorer.hpp"
-
+#include <assert.h>
+#include "person.h"
+#include "util.h"
+#include "game.h"
+#include "gameplay.h"
+#include "level.h"
+#include "media.h"
+#include "player.h"
+#include "particle.h"
+#include "angel.h"
+#include "scorer.h"
 
 #define CALLING_DURATION	(BPS*1.0)
-
 
 enum {
   ANI_FRAME_STAND,
@@ -54,7 +53,6 @@ enum {
   ANI_FRAME_HELP2,
   ANI_FRAME_HELP3
 };
-
 
 Person::Person(vector2d pos)
 {
@@ -68,11 +66,9 @@ Person::Person(vector2d pos)
   set_state(STAND_PERSON);
 }
 
-
 Person::~Person()
 {
 }
-
 
 void Person::update()
 {
@@ -126,9 +122,8 @@ void Person::update()
       break;
 
     case ABDUCTING_PERSON:
-      if (m_abductor != NULL) {
-	m_pos += m_abductor->get_vel() / BPS;
-      }
+      assert(m_abductor != NULL);
+      m_pos += m_abductor->get_vel() / BPS;
       break;
 
     case FALLING_PERSON:
@@ -173,8 +168,8 @@ void Person::update()
       // is this person completely burned?
       if (m_toast_factor >= 1.0) {
 	GAMEPLAY->get_scorer()->one_to_hell();
-	kill();
 	burn();
+	kill();
       }
 
       // go away from devil
@@ -199,7 +194,6 @@ void Person::update()
   }
 }
 
-
 void Person::draw(BITMAP *bmp)
 {
   if (m_state != DEAD_PERSON) {
@@ -215,57 +209,70 @@ void Person::draw(BITMAP *bmp)
   }
 }
 
-
 bool Person::is_dead()
 {
   return m_state == DEAD_PERSON;
 }
-
 
 vector2d Person::get_pos() const
 {
   return m_pos;
 }
 
-
 Angel *Person::get_abductor()
 {
   return m_abductor;
 }
 
-
 void Person::set_abductor(Angel *angel)
 {
+  assert(!m_abductor);
   m_abductor = angel;
 }
 
-
 void Person::catch_person()
 {
+  assert(m_state != ABDUCTING_PERSON); // doble abducting? impossible
+  assert(m_abductor && !m_abductor->is_dead()); // abductor isn't dead
+
   set_state(ABDUCTING_PERSON);
 }
 
-
 void Person::throw_person()
 {
-  set_state(FALLING_PERSON);
-}
+  assert(m_state == ABDUCTING_PERSON);
 
+  set_state(FALLING_PERSON);
+  if (m_abductor != NULL)
+    m_abductor = NULL;
+}
 
 void Person::kill()
 {
+  if (m_abductor != NULL) {
+    m_abductor->fire_event_person_die(this);
+    m_abductor = NULL;
+  }
+
   set_state(DEAD_PERSON);
-  if (m_abductor != NULL)
-    m_abductor->set_target(NULL);
 }
 
+void Person::fire_event_angel_die(Angel *angel)
+{
+  // did the abductor of this person die?
+  if (m_abductor == angel) {
+    m_abductor = NULL;
+
+    if (m_state == ABDUCTING_PERSON)
+      throw_person();
+  }
+}
 
 void Person::set_state(PersonState state)
 {
   m_state = state;
   m_state_time = GAME_T;
 }
-
 
 // converts a dead person in black particles
 void Person::burn()
@@ -300,7 +307,6 @@ void Person::burn()
 
     }
 }
-
 
 // prepares the person_bmp
 BITMAP *Person::prepare_sprite()

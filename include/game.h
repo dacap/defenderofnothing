@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -29,68 +29,39 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef PERSON_HPP
-#define PERSON_HPP
+#ifndef GAME_H_INCLUDED
+#define GAME_H_INCLUDED
 
-#include "object.hpp"
-#include "vector2d.hpp"
-
-
-class Angel;
+#include "gfx.h"
+#include "gamestate.h"
 
 
-enum PersonState {
-  STAND_PERSON,
-  WALKING_PERSON,
-  LOOKING_PERSON,
-  CALLING_PERSON,
-  ABDUCTING_PERSON,
-  FALLING_PERSON,
-  DEAD_PERSON
-};
+// game speed (beats per second)
+#define BPS	60
+
+// game time
+#define GAME_T	(the_game->get_time())
 
 
-class Person : public Object
+// the game
+class Game
 {
-  // type of person
-  int m_type;
-
-  // position
-  vector2d m_pos;
-  double m_velx;
-  bool m_right;
-
-  // state of the person
-  PersonState m_state;
-  int m_state_time;
-  double m_toast_factor;
-
-  // who is abducting me?
-  Angel *m_abductor;
+  int m_time;
+  GameState *m_state;
 
 public:
-  Person(vector2d pos);
-  virtual ~Person();
+  void start();
+  int get_time();
 
-  virtual void update();
-  virtual void draw(BITMAP *bmp);
+  bool update();
+  void draw(BITMAP *bmp);
 
-  virtual bool is_dead();
-
-  vector2d get_pos() const;
-//   void abduct(vector2d vel);
-
-  Angel *get_abductor();
-  void set_abductor(Angel *angel);
-  void catch_person();
-  void throw_person();
-  void kill();
-
-private:
-  void set_state(PersonState state);
-  void burn();
-  BITMAP *prepare_sprite();
+  GameState *get_state();
 };
 
 
-#endif // PERSON_HPP
+// the current game
+extern Game *the_game;
+
+
+#endif // GAME_H_INCLUDED

@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -30,17 +30,15 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <allegro.h>
-#include "gfx.hpp"
-#include "util.hpp"
-#include "media.hpp"
-
+#include "gfx.h"
+#include "util.h"
+#include "media.h"
 
 int _gfx_w = 0;
 
 bool gfx_switched = false;
 bool gfx_widescreen = true;
 bool gfx_fullscreen = false;
-
 
 // changes to some widescreen or fullscreen mode
 bool setup_gfx()
@@ -92,7 +90,6 @@ bool setup_gfx()
   return true;
 }
 
-
 void switch_widescreen()
 {
   if (!setup_gfx() != 0) {
@@ -100,7 +97,6 @@ void switch_widescreen()
     exit(1);
   }
 }
-
 
 void make_screenshot(BITMAP *bmp)
 {
@@ -119,19 +115,16 @@ void make_screenshot(BITMAP *bmp)
   }
 }
 
-
 void trans_mode(int a)
 {
   drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
   set_trans_blender(0, 0, 0, a);
 }
 
-
 void lit_mode(int r, int g, int b)
 {
   set_trans_blender(r, g, b, 0);
 }
-
 
 int blend_color(int from, int to, double t)
 {
@@ -144,7 +137,6 @@ int blend_color(int from, int to, double t)
 		  MID(0, b, 255),
 		  MID(0, a, 255));
 }
-
 
 void draw_text(BITMAP *bmp, int x, int y, int color, const char *format, ...)
 {
@@ -159,7 +151,6 @@ void draw_text(BITMAP *bmp, int x, int y, int color, const char *format, ...)
   textout_ex(bmp, gamefont, buf, x, y, color, -1);
 }
 
-
 void draw_text_r(BITMAP *bmp, int x, int y, int color, const char *format, ...)
 {
   char buf[512];
@@ -172,7 +163,6 @@ void draw_text_r(BITMAP *bmp, int x, int y, int color, const char *format, ...)
   textout_right_ex(bmp, gamefont, buf, x, y+1, blend_color(color, makecol(0, 0, 0), 0.5), -1);
   textout_right_ex(bmp, gamefont, buf, x, y, color, -1);
 }
-
 
 void draw_text(BITMAP *bmp, int x, int y, int w, int h, int color, const char *format, ...)
 {
@@ -195,7 +185,6 @@ void draw_text(BITMAP *bmp, int x, int y, int w, int h, int color, const char *f
     destroy_bitmap(tmp);
   }
 }
-
 
 void draw_bg(BITMAP *bmp, BITMAP *bg, int x, int y)
 {

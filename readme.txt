@@ -1,7 +1,7 @@
 Defender Of Nothing, SpeedHack 2007
-by David A. Capello
+by David Capello
 
-Website: www.davidcapello.com.ar
+Website: http://www.davidcapello.com.ar/defnot/
 
 This game is INCOMPLETE
 
@@ -68,4 +68,4 @@ Hell to keep them more safe.
 
 Programming and graphics by:
 
-  David A. Capello
+  David Capello

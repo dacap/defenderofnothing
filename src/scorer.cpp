@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -30,16 +30,15 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <allegro.h>
-#include "scorer.hpp"
-#include "media.hpp"
-#include "level.hpp"
-#include "gfx.hpp"
-#include "game.hpp"
-#include "gameplay.hpp"
-#include "player.hpp"
-#include "person.hpp"
-#include "angel.hpp"
-
+#include "scorer.h"
+#include "media.h"
+#include "level.h"
+#include "gfx.h"
+#include "game.h"
+#include "gameplay.h"
+#include "player.h"
+#include "person.h"
+#include "angel.h"
 
 Scorer::Scorer()
 {
@@ -51,16 +50,13 @@ Scorer::Scorer()
   m_total_angels = 0;
 }
 
-
 Scorer::~Scorer()
 {
 }
 
-
 void Scorer::update()
 {
 }
-
 
 void Scorer::draw(BITMAP *bmp)
 {
@@ -75,14 +71,13 @@ void Scorer::draw(BITMAP *bmp)
   draw_text(bmp, 2, 14, makecol(255, 0,   0), "%02d in Hell", m_people_in_hell);
 
   line(bmp, 80, 2, 80, 14+12, makecol(255, 255, 0));
-  draw_text(bmp, 80, (2+12+2+12+2)/2-6, makecol(255, 255, 0), "%02d", m_people_in_earth);
+  draw_text(bmp, 81, (2+12+2+12+2)/2-6, makecol(255, 255, 0), "%02d", m_people_in_earth);
 
   draw_minimap(bmp, bmp->w-50-3, 2, 50, 32);
   draw_text_r(bmp, bmp->w-3, 2+32+2, makecol(255, 255, 255), "Angels");
   draw_text_r(bmp, bmp->w-3, 2+32+2+12, makecol(255, 255, 255), "%02d/%02d",
 	      m_killed_angels, m_total_angels);
 }
-
 
 void Scorer::reset(int angels, int people)
 {
@@ -94,13 +89,11 @@ void Scorer::reset(int angels, int people)
   m_killed_angels = 0;
 }
 
-
 void Scorer::one_to_heaven()
 {
   --m_people_in_earth;
   ++m_people_in_heaven;
 }
-
 
 void Scorer::one_to_hell()
 {
@@ -112,12 +105,6 @@ void Scorer::one_to_killed_angel()
 {
   m_killed_angels++;
 }
-
-
-int Scorer::get_killed_angels()
-{
-}
-
 
 void Scorer::draw_minimap(BITMAP *bmp, int x, int y, int w, int h)
 {
@@ -135,8 +122,8 @@ void Scorer::draw_minimap(BITMAP *bmp, int x, int y, int w, int h)
   to_minimap(pos, x, y, w, h, u, v);
   putpixel(bmp, u, v, makecol(255, 200, 0));
 
-  ObjectList people = gameplay->get_people();
-  ObjectList angels = gameplay->get_angels();
+  const ObjectList& people = gameplay->get_people();
+  const ObjectList& angels = gameplay->get_angels();
   ObjectList::const_iterator it;
 
   for (it = people.begin(); it != people.end(); ++it) {
@@ -151,7 +138,6 @@ void Scorer::draw_minimap(BITMAP *bmp, int x, int y, int w, int h)
     putpixel(bmp, u, v, makecol(255, 255, 255));
   }
 }
-
 
 void Scorer::to_minimap(vector2d pos, int x, int y, int w, int h,
 			int &u, int &v)

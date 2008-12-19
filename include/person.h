@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -29,29 +29,70 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef SPRITE_HPP
-#define SPRITE_HPP
+#ifndef PERSON_H_INCLUDED
+#define PERSON_H_INCLUDED
+
+#include "object.h"
+#include "vector2d.h"
 
 
-class Sprite
-{
-public:
-  BITMAP *bmp;
-  int x, y;
-  bool h_flip : 1;
-  bool v_flip : 1;
+class Angel;
 
-  Sprite(BITMAP *bmp, int x, int y, int h_flip = false, int v_flip = false);
-  virtual ~Sprite();
 
-  void draw(BITMAP *bmp);
-
-  int flip_x(int u);
-  int flip_y(int v);
-
-  bool collision(int u, int v);
-  bool collision(Sprite &spr);
+enum PersonState {
+  STAND_PERSON,
+  WALKING_PERSON,
+  LOOKING_PERSON,
+  CALLING_PERSON,
+  ABDUCTING_PERSON,
+  FALLING_PERSON,
+  DEAD_PERSON
 };
 
 
-#endif
+class Person : public Object
+{
+  // type of person
+  int m_type;
+
+  // position
+  vector2d m_pos;
+  double m_velx;
+  bool m_right;
+
+  // state of the person
+  PersonState m_state;
+  int m_state_time;
+  double m_toast_factor;
+
+  // who is abducting me?
+  Angel *m_abductor;
+
+public:
+  Person(vector2d pos);
+  virtual ~Person();
+
+  virtual void update();
+  virtual void draw(BITMAP *bmp);
+
+  virtual bool is_dead();
+
+  vector2d get_pos() const;
+//   void abduct(vector2d vel);
+
+  Angel *get_abductor();
+  void set_abductor(Angel *angel);
+  void catch_person();
+  void throw_person();
+  void kill();
+
+  void fire_event_angel_die(Angel *angel);
+
+private:
+  void set_state(PersonState state);
+  void burn();
+  BITMAP *prepare_sprite();
+};
+
+
+#endif // PERSON_H_INCLUDED

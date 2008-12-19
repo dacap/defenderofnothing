@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -30,15 +30,13 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <allegro.h>
-#include "menu.hpp"
-#include "game.hpp"
-#include "gfx.hpp"
-#include "gameplay.hpp"
-#include "media.hpp"
-
+#include "menu.h"
+#include "game.h"
+#include "gfx.h"
+#include "gameplay.h"
+#include "media.h"
 
 static const char *gametitle = "Defender Of Nothing";
-
 
 Menu::Menu()
   : m_up(KEY_UP)
@@ -56,12 +54,10 @@ Menu::Menu()
   draw_text(m_logo, 0, 0, makecol(200, 180, 0), gametitle);
 }
 
-
 Menu::~Menu()
 {
   destroy_bitmap(m_logo);
 }
-
 
 GameState *Menu::update()
 {
@@ -97,7 +93,6 @@ GameState *Menu::update()
   return this;
 }
 
-
 void Menu::draw(BITMAP *bmp)
 {
   static char *options[4] = { "play", "widescreen", "fullscreen", "quit" };
@@ -117,13 +112,12 @@ void Menu::draw(BITMAP *bmp)
     x -= 2;
   }
 
-  draw_text_r(bmp, bmp->w-3, bmp->h-14, makecol(0, 180, 200), "(C) 2007 David A. Capello");
+  draw_text_r(bmp, bmp->w-3, bmp->h-14, makecol(0, 180, 200), "(C) 2007 David Capello");
 
   draw_sprite(bmp, MEDIA_BITMAP(DISQUAL_PCX),
 	      bmp->w-32-MEDIA_BITMAP(DISQUAL_PCX)->w,
 	      bmp->h/2-MEDIA_BITMAP(DISQUAL_PCX)->h);
 }
-
 
 void Menu::draw_item(BITMAP *bmp, int x, int y, const char *text, bool selected)
 {
@@ -134,4 +128,3 @@ void Menu::draw_item(BITMAP *bmp, int x, int y, const char *text, bool selected)
   else
     draw_text(bmp, x, y, makecol(190, 0, 0), text);
 }
-

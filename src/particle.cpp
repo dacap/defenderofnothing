@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -30,14 +30,13 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <allegro.h>
-#include "particle.hpp"
-#include "util.hpp"
-#include "level.hpp"
-#include "game.hpp"
-#include "gameplay.hpp"
-#include "angel.hpp"
-#include "sprite.hpp"
-
+#include "particle.h"
+#include "util.h"
+#include "level.h"
+#include "game.h"
+#include "gameplay.h"
+#include "angel.h"
+#include "sprite.h"
 
 Particle::Particle(vector2d pos, vector2d vel, vector2d acc,
 		   int lifetime)
@@ -48,11 +47,9 @@ Particle::Particle(vector2d pos, vector2d vel, vector2d acc,
 {
 }
 
-
 Particle::~Particle()
 {
 }
-
 
 void Particle::update()
 {
@@ -61,21 +58,17 @@ void Particle::update()
   --m_lifetime;
 }
 
-
 bool Particle::is_dead()
 {
   return (m_lifetime <= 0);
 }
-
 
 void Particle::kill()
 {
   m_lifetime = 0;
 }
 
-
 //////////////////////////////////////////////////////////////////////
-
 
 PixelParticle::PixelParticle(vector2d pos, vector2d vel, vector2d acc,
 			     int lifetime, int color_from, int color_to)
@@ -87,11 +80,9 @@ PixelParticle::PixelParticle(vector2d pos, vector2d vel, vector2d acc,
 {
 }
 
-
 PixelParticle::~PixelParticle()
 {
 }
-
 
 void PixelParticle::draw(BITMAP *bmp)
 {
@@ -104,9 +95,7 @@ void PixelParticle::draw(BITMAP *bmp)
   putpixel(bmp, x, y, blend_color(m_color_from, m_color_to, t));
 }
 
-
 //////////////////////////////////////////////////////////////////////
-
 
 Fire::Fire(vector2d pos, vector2d vel, int size, double energy)
   : Particle(pos, vel, vector2d(0, 0), BPS*60)
@@ -115,11 +104,9 @@ Fire::Fire(vector2d pos, vector2d vel, int size, double energy)
 {
 }
 
-
 Fire::~Fire()
 {
 }
-
 
 void Fire::update()
 {
@@ -144,16 +131,14 @@ void Fire::update()
   // the fire is out of the scenary
   Level *level = gameplay->get_level();
 
-  if (m_pos.x*TILE_W+m_size < 0 || m_pos.x*TILE_W-m_size >= level->get_w()*TILE_W ||
-      m_pos.y*TILE_H+m_size < 0 || m_pos.y*TILE_H-m_size >= level->get_h()*TILE_H) {
+  if (m_pos.x*TILE_W+m_size < 0 || m_pos.x*TILE_W-m_size >= level->get_w()*TILE_W)
     kill();
-  }
 
   // hit an angel
   int x, y;
   level->to_screen(m_pos, x, y);
 
-  ObjectList angels = gameplay->get_angels();
+  const ObjectList& angels = gameplay->get_angels();
   ObjectList::const_iterator it;
   for (it = angels.begin(); it != angels.end(); ++it) {
     Angel *angel = static_cast<Angel *>(*it);
@@ -183,7 +168,6 @@ void Fire::update()
   }
 }
 
-
 void Fire::draw(BITMAP *bmp)
 {
   int x, y;
@@ -199,7 +183,6 @@ void Fire::draw(BITMAP *bmp)
   circlefill(bmp, x, y, m_size-1, makecol(255, 255, 0));
 }
 
-
 void Fire::hit(double energy)
 {
   m_energy -= energy;
@@ -208,7 +191,6 @@ void Fire::hit(double energy)
     kill();
   }
 }
-
 
 void Fire::impact()
 {
@@ -226,4 +208,3 @@ void Fire::impact()
 			 makecol(255, 255, 0)));
   }
 }
-

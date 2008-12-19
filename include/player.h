@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -29,12 +29,12 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef PLAYER_HPP
-#define PLAYER_HPP
+#ifndef PLAYER_H_INCLUDED
+#define PLAYER_H_INCLUDED
 
-#include "object.hpp"
-#include "vector2d.hpp"
-#include "input.hpp"
+#include "object.h"
+#include "vector2d.h"
+#include "input.h"
 
 
 class Level;
@@ -109,4 +109,4 @@ private:
 };
 
 
-#endif // PLAYER_HPP
+#endif // PLAYER_H_INCLUDED

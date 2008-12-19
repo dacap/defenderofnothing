@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -29,25 +29,19 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef FINAL_HPP
-#define FINAL_HPP
+#ifndef LOCKEDKEY_H_INCLUDED
+#define LOCKEDKEY_H_INCLUDED
 
 
-#include "gamestate.hpp"
-
-
-class Final : public GameState
+class LockedKey
 {
-  int m_final_time;
-  bool m_enter_pressed;
-  
-public:
-  Final();
-  virtual ~Final();
+  int m_key;
+  bool m_locked;
 
-  GameState *update();
-  void draw(BITMAP *bmp);
+public:
+  LockedKey(int k);
+  bool pressed();
 };
 
 
-#endif // FINAL_HPP
+#endif // LOCKEDKEY_H_INCLUDED

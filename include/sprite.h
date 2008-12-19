@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -29,41 +29,29 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef SCORER_HPP
-#define SCORER_HPP
+#ifndef SPRITE_H_INCLUDED
+#define SPRITE_H_INCLUDED
 
 
-#include "object.hpp"
-#include "vector2d.hpp"
-
-
-class Scorer : public Object
+class Sprite
 {
-  int m_people_in_heaven;
-  int m_people_in_hell;
-  int m_people_in_earth;
-
-  int m_killed_angels;
-  int m_total_angels;
-  
 public:
-  Scorer();
-  virtual ~Scorer();
+  BITMAP *bmp;
+  int x, y;
+  bool h_flip : 1;
+  bool v_flip : 1;
 
-  virtual void update();
-  virtual void draw(BITMAP *bmp);
+  Sprite(BITMAP *bmp, int x, int y, int h_flip = false, int v_flip = false);
+  virtual ~Sprite();
 
-  void reset(int angels, int people);
+  void draw(BITMAP *bmp);
 
-  void one_to_heaven();
-  void one_to_hell();
-  void one_to_killed_angel();
+  int flip_x(int u);
+  int flip_y(int v);
 
-  int get_killed_angels();
-
-private:
-  void draw_minimap(BITMAP *bmp, int x, int y, int w, int h);
-  void to_minimap(vector2d pos, int x, int y, int w, int h, int &u, int &v);
+  bool collision(int u, int v);
+  bool collision(Sprite &spr);
 };
+
 
 #endif

@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -29,25 +29,35 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef GAMESTATE_HPP
-#define GAMESTATE_HPP
+#ifndef MENU_H_INCLUDED
+#define MENU_H_INCLUDED
+
+#include <stack>
+#include "gamestate.h"
+#include "lockedkey.h"
 
 
-// a game state
-class GameState
+// the menu
+class Menu : public GameState
 {
+  int m_start_time;
+  int m_selected;
+  int m_options;
+  LockedKey m_up;
+  LockedKey m_down;
+  LockedKey m_enter;
+  LockedKey m_esc;
+  BITMAP *m_logo;
+
 public:
-  GameState();
-  virtual ~GameState();
+  Menu();
+  virtual ~Menu();
 
-  // update the logic of the game and returns the new (or this) state
-  // note: you can return NULL if the game ends completelly (e.g. return to OS)
-  virtual GameState *update() = 0;
+  virtual GameState *update();
+  virtual void draw(BITMAP *bmp);
 
-  // draw the game in the specified bitmap
-  virtual void draw(BITMAP *bmp) = 0;
-
+  static void draw_item(BITMAP *bmp, int x, int y, const char *text, bool selected);
 };
 
 
-#endif // GAME_HPP
+#endif // MENU_H_INCLUDED

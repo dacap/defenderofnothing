@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -29,35 +29,39 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef MENU_HPP
-#define MENU_HPP
-
-#include <stack>
-#include "gamestate.hpp"
-#include "lockedkey.hpp"
+#ifndef SCORER_H_INCLUDED
+#define SCORER_H_INCLUDED
 
 
-// the menu
-class Menu : public GameState
+#include "object.h"
+#include "vector2d.h"
+
+
+class Scorer : public Object
 {
-  int m_start_time;
-  int m_selected;
-  int m_options;
-  LockedKey m_up;
-  LockedKey m_down;
-  LockedKey m_enter;
-  LockedKey m_esc;
-  BITMAP *m_logo;
+  int m_people_in_heaven;
+  int m_people_in_hell;
+  int m_people_in_earth;
 
+  int m_killed_angels;
+  int m_total_angels;
+  
 public:
-  Menu();
-  virtual ~Menu();
+  Scorer();
+  virtual ~Scorer();
 
-  virtual GameState *update();
+  virtual void update();
   virtual void draw(BITMAP *bmp);
 
-  static void draw_item(BITMAP *bmp, int x, int y, const char *text, bool selected);
+  void reset(int angels, int people);
+
+  void one_to_heaven();
+  void one_to_hell();
+  void one_to_killed_angel();
+
+private:
+  void draw_minimap(BITMAP *bmp, int x, int y, int w, int h);
+  void to_minimap(vector2d pos, int x, int y, int w, int h, int &u, int &v);
 };
 
-
-#endif // MENU_HPP
+#endif

@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -29,40 +29,23 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef UTIL_HPP
-#define UTIL_HPP
-
-#include <cmath>
-#include <cstdlib>
-#include <string>
-#include "game.hpp"
+#ifndef OBJECT_H_INCLUDED
+#define OBJECT_H_INCLUDED
 
 
-inline double exp_ramp(int start_time, double duration_in_beats)
+// the object
+class Object
 {
-  if (GAME_T - start_time > duration_in_beats)
-    return 1.0;
-  else {
-    double t = (GAME_T - start_time) / duration_in_beats;
-    return 1.0 - std::exp(-5.0 * t);
-  }
-}
+public:
+  Object() { }
+  virtual ~Object() { }
+
+  virtual void update() = 0;
+  virtual void draw(BITMAP *bmp) = 0;
+
+  // returns true if the object is dead and can be removed
+  virtual bool is_dead() { return false; }
+};
 
 
-inline int rand_range(int min, int max)
-{
-  return min + (std::rand() % (max-min+1));
-}
-
-
-inline double rand_range(double min, double max)
-{
-  return rand_range(static_cast<int>(min * 1000),
-		    static_cast<int>(max * 1000)) / 1000.0;
-}
-
-
-std::string redir(const std::string &filename);
-
-
-#endif
+#endif // OBJECT_H_INCLUDED

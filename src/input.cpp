@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -30,11 +30,9 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <allegro.h>
-#include "input.hpp"
-
+#include "input.h"
 
 Input *the_input = NULL;
-
 
 Input::Input()
 {
@@ -43,57 +41,14 @@ Input::Input()
   m_up = INPUT_KEY_UP;
   m_down = INPUT_KEY_DOWN;
   m_fire = INPUT_KEY_LCONTROL;
+  m_fire2 = INPUT_KEY_SPACE;
   m_target = INPUT_KEY_LSHIFT;
   m_demonize = INPUT_KEY_ALT;
 }
 
-
 Input::~Input()
 {
 }
-
-
-bool Input::left()
-{
-  return Input::check_input_state(m_left);
-}
-
-
-bool Input::right()
-{
-  return Input::check_input_state(m_right);
-}
-
-
-bool Input::up()
-{
-  return Input::check_input_state(m_up);
-}
-
-
-bool Input::down()
-{
-  return Input::check_input_state(m_down);
-}
-
-
-bool Input::fire()
-{
-  return Input::check_input_state(m_fire);
-}
-
-
-bool Input::target()
-{
-  return Input::check_input_state(m_target);
-}
-
-
-bool Input::demonize()
-{
-  return Input::check_input_state(m_demonize);
-}
-
 
 //////////////////////////////////////////////////////////////////////
 // mapper input_id -> joystick input

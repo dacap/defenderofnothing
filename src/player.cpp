@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -30,15 +30,14 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <allegro.h>
-#include "game.hpp"
-#include "player.hpp"
-#include "gameplay.hpp"
-#include "level.hpp"
-#include "util.hpp"
-#include "media.hpp"
-#include "particle.hpp"
-#include "sprite.hpp"
-
+#include "game.h"
+#include "player.h"
+#include "gameplay.h"
+#include "level.h"
+#include "util.h"
+#include "media.h"
+#include "particle.h"
+#include "sprite.h"
 
 #define INTRO_DURATION		(BPS*0.5)
 #define DYING_DURATION		(BPS*0.5)
@@ -52,7 +51,6 @@
 #define LANDING_DURATION	(BPS*0.5)
 #define WALKING_DURATION	(BPS*1.0)
 
-
 Player::Player()
 {
   m_input = the_input;
@@ -60,11 +58,9 @@ Player::Player()
   set_state(INIT_PLAYER);
 }
 
-
 Player::~Player()
 {
 }
-
 
 void Player::update()
 {
@@ -76,6 +72,7 @@ void Player::update()
     m_fire_time = 0;
     m_fire_counter = 0;
     m_look = vector2d(8, 0);
+    m_halo_factor = 0.0;
 //     m_smoke_time = GAME_T;
 
     m_pos = level()->get_start_pos();
@@ -154,7 +151,6 @@ void Player::update()
   //////////////////////////////////////////////////////////////////////
 }
 
-
 void Player::draw(BITMAP *bmp)
 {
   int x, y;
@@ -229,7 +225,6 @@ void Player::draw(BITMAP *bmp)
 //   line(bmp, x, y, u, v, makecol(255, 255, 0));
 //   ellipse(bmp, u, v, 8, 8, makecol(255, 255, 0));
 }
-
 
 void Player::get_sprites(Sprite *&sprite, Sprite *&tail_sprite)
 {
@@ -385,12 +380,10 @@ void Player::get_sprites(Sprite *&sprite, Sprite *&tail_sprite)
   }
 }
 
-
 vector2d Player::get_pos() const
 {
   return m_pos;
 }
-
 
 void Player::inc_halo(double increment)
 {
@@ -399,18 +392,15 @@ void Player::inc_halo(double increment)
     m_halo_factor = 1.0;
 }
 
-
 void Player::inc_bad_fire()
 {
   ++m_bad_fire_counter;
 }
 
-
 void Player::start_level()
 {
   set_state(INIT_PLAYER);
 }
-
 
 void Player::update_fly()
 {
@@ -470,7 +460,6 @@ void Player::update_fly()
   }
 }
 
-
 void Player::update_walk()
 {
   m_vel = vector2d(m_right ? 10.0: -10.0, -10.0);
@@ -500,7 +489,6 @@ void Player::update_walk()
   else if (m_state != STANDING_PLAYER)
     set_state(STANDING_PLAYER);
 }
-
 
 void Player::update_fire()
 {
@@ -559,7 +547,6 @@ void Player::update_fire()
     m_fire_time = 0;
 }
 
-
 void Player::draw_charge(BITMAP *bmp, int x, int y)
 {
   double t1 = exp_ramp(m_charge_time+TO_BIG_CHARGE_DURATION, MAX_CHARGE_DURATION*0.5);
@@ -608,7 +595,6 @@ void Player::draw_charge(BITMAP *bmp, int x, int y)
   //     }
 }
 
-
 void Player::draw_halo(BITMAP *bmp, Sprite *sprite)
 {
   int x = sprite->x + sprite->flip_x(sprite->bmp->w/2-4);
@@ -629,7 +615,6 @@ void Player::draw_halo(BITMAP *bmp, Sprite *sprite)
   solid_mode();
 }
 
-
 void Player::set_state(PlayerState state)
 {
   m_old_state = m_state;
@@ -637,7 +622,6 @@ void Player::set_state(PlayerState state)
   m_state_time = GAME_T;
   m_tail_time = GAME_T;
 }
-
 
 Level *Player::level()
 {

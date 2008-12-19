@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -29,39 +29,25 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef GAME_HPP
-#define GAME_HPP
-
-#include "gfx.hpp"
-#include "gamestate.hpp"
+#ifndef GAMESTATE_H_INCLUDED
+#define GAMESTATE_H_INCLUDED
 
 
-// game speed (beats per second)
-#define BPS	60
-
-// game time
-#define GAME_T	(the_game->get_time())
-
-
-// the game
-class Game
+// a game state
+class GameState
 {
-  int m_time;
-  GameState *m_state;
-
 public:
-  void start();
-  int get_time();
+  GameState();
+  virtual ~GameState();
 
-  bool update();
-  void draw(BITMAP *bmp);
+  // update the logic of the game and returns the new (or this) state
+  // note: you can return NULL if the game ends completelly (e.g. return to OS)
+  virtual GameState *update() = 0;
 
-  GameState *get_state();
+  // draw the game in the specified bitmap
+  virtual void draw(BITMAP *bmp) = 0;
+
 };
 
 
-// the current game
-extern Game *the_game;
-
-
-#endif // GAME_HPP
+#endif // GAME_H_INCLUDED

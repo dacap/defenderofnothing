@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef MEDIA_HPP
-#define MEDIA_HPP
+#ifndef MEDIA_H_INCLUDED
+#define MEDIA_H_INCLUDED
 
 #include "ids.h"
 
@@ -89,4 +89,4 @@ extern BITMAP *angels_fly_shoot_down_bmp;
 bool load_media();
 
 
-#endif // MEDIA_HPP
+#endif // MEDIA_H_INCLUDED

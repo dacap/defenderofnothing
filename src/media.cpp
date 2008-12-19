@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -30,9 +30,8 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <allegro.h>
-#include "media.hpp"
-#include "util.hpp"
-
+#include "media.h"
+#include "util.h"
 
 DATAFILE *media;
 
@@ -77,7 +76,6 @@ BITMAP *angels_fly_kick_bmp;
 BITMAP *angels_fly_shoot_right_bmp;
 BITMAP *angels_fly_shoot_diagonal_bmp;
 BITMAP *angels_fly_shoot_down_bmp;
-
 
 bool load_media()
 {
@@ -150,5 +148,3 @@ bool load_media()
 
   return true;
 }
-
-

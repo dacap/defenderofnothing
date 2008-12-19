@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -29,81 +29,70 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ANGEL_HPP
-#define ANGEL_HPP
+#ifndef PARTICLES_H_INCLUDED
+#define PARTICLES_H_INCLUDED
 
-#include "object.hpp"
-#include "vector2d.hpp"
+#include "object.h"
+#include "vector2d.h"
 
 
-class Sprite;
-class Person;
 class Level;
 
 
-enum AngelState {
-  INTRO_ANGEL,
-  FLOATING_ANGEL,
-  FLYTOANYWHERE_ANGEL,
-  FLYTOPERSON_ANGEL,
-  FLYUP_ANGEL,
-  AVOIDFIRE_ANGEL,
-  FIGHTING_ANGEL,
-  ABDUCTING_ANGEL,
-  HIT_ANGEL,
-  DEAD_ANGEL
+// a partile
+class Particle : public Object
+{
+protected:
+  int m_lifetime;
+  vector2d m_pos;
+  vector2d m_vel;
+  vector2d m_acc;
+
+public:
+
+  Particle(vector2d pos, vector2d vel, vector2d acc, int lifetime);
+  virtual ~Particle() = 0;
+
+  virtual void update();
+  virtual void draw(BITMAP *bmp) = 0;
+
+  virtual bool is_dead();
+  void kill();
 };
 
 
-// the angel
-class Angel : public Object
+class PixelParticle : public Particle
 {
-  vector2d m_pos;		// position of the angel in the level
-  vector2d m_vel;		// velocity of the angel in the level
-
-  // state of the angel
-  AngelState m_state;
-  int m_state_time;
-  bool m_right;
-  double m_energy;
-
-  // hit
-  int m_hit_num;
-
-  // wings
-  int m_wing_time;
-
-  // target person
-  Person *m_target;
+  int m_start_time, m_start_lifetime;
+  int m_color_from, m_color_to;
 
 public:
-  Angel(vector2d pos);
-  virtual ~Angel();
+  PixelParticle(vector2d pos, vector2d vel, vector2d acc, int lifetime,
+		int color_from, int color_to);
+
+  virtual ~PixelParticle();
+
+  virtual void draw(BITMAP *bmp);
+};
+
+
+
+class Fire : public Particle
+{
+  int m_size;
+  double m_energy;
+
+public:
+  Fire(vector2d pos, vector2d vel, int size, double energy);
+  virtual ~Fire();
 
   virtual void update();
   virtual void draw(BITMAP *bmp);
 
-  virtual bool is_dead();
-
-  bool is_hittable();
-  void hit(vector2d vel, double energy);
-  void kill();
-
-  vector2d get_pos() const;
-  vector2d get_vel() const;
-  double get_energy() const;
-
-  void get_sprites(Sprite *&sprite, Sprite *&wings_sprite);
-
-  void set_target(Person *person);
-
 private:
-  void set_state(AngelState state);
-  void burn();
-  Person *find_target_person();
-  vector2d calculate_vel_to_abduct();
-  Level *level();
+  void hit(double energy);
+  void impact();
 };
 
 
-#endif // ANGEL_HPP
+#endif // PARTICLES_H_INCLUDED

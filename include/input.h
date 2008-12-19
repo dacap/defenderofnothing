@@ -1,5 +1,5 @@
 // Defender Of Nothing
-// Copyright (C) 2007 by David A. Capello
+// Copyright (C) 2007 by David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef INPUT_HPP
-#define INPUT_HPP
+#ifndef INPUT_H_INCLUDED
+#define INPUT_H_INCLUDED
 
 
 #define SUPPORTED_JOYSTICKS 4
@@ -221,7 +221,7 @@ class Input
   int m_right;
   int m_up;
   int m_down;
-  int m_fire;
+  int m_fire, m_fire2;
   int m_target;
   int m_demonize;
 
@@ -229,13 +229,14 @@ public:
   Input();
   virtual ~Input();
 
-  bool left();
-  bool right();
-  bool up();
-  bool down();
-  bool fire();
-  bool target();
-  bool demonize();
+  inline bool left() const { return check_input_state(m_left); }
+  inline bool right() const { return check_input_state(m_right); }
+  inline bool up() const { return check_input_state(m_up); }
+  inline bool down() const { return check_input_state(m_down); }
+  inline bool fire() const { return (check_input_state(m_fire) ||
+				     check_input_state(m_fire2)); }
+  inline bool target() const { return check_input_state(m_target); }
+  inline bool demonize() const { return check_input_state(m_demonize); }
 
   static int wait_input();
 
@@ -247,4 +248,4 @@ private:
 extern Input *the_input;
 
 
-#endif // INPUT_HPP
+#endif // INPUT_H_INCLUDED
