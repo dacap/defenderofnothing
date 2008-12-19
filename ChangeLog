@@ -1,0 +1,18 @@
+2007-09-15  David A. Capello  <dacap@users.sourceforge.net>  1:59 a.m.
+
+	* src/media.cpp, media/bedevil.dat, src/player.cpp: Drawn the main
+	character, with movements to all sides and a couple of "fire"
+	animations. Also drawn the tail movement. Created the
+	datafile. Added the graphics to the player.
+
+2007-09-14  David A. Capello  <dacap@users.sourceforge.net>  10:32 p.m.
+
+	* src/gameplay.cpp: input, player, level, screenshot. The only code
+	reutilized from other project (http://vaca.sourceforge.net/) is
+	vector2d. All the "look-at" and scroll movement was made.
+
+2007-09-14  David A. Capello  <dacap@users.sourceforge.net>  4:13 p.m.
+
+	* src/main.cpp (game_loop): Done the main game loop. And the base
+	classes: Game, GameState, Control. I'm very happy: I didn't make
+	any copy & paste :)
