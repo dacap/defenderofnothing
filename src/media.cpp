@@ -1,58 +1,117 @@
 #include <allegro.h>
 #include "media.hpp"
+#include "util.hpp"
 
 
 DATAFILE *media;
 
+BITMAP *devil_floating_bmp;
+BITMAP *devil_floating_left_shot1_bmp;
+BITMAP *devil_floating_left_shot2_bmp;
+BITMAP *devil_floating_left_shot3_bmp;
+BITMAP *devil_floating_right_shot1_bmp;
+BITMAP *devil_floating_right_shot2_bmp;
+BITMAP *devil_floating_right_shot3_bmp;
+BITMAP *devil_floating_big_shot1_bmp;
+BITMAP *devil_floating_big_shot2_bmp;
+BITMAP *devil_floating_big_shot3_bmp;
 BITMAP *devil_stand_bmp;
-BITMAP *devil_left_shot1_bmp;
-BITMAP *devil_left_shot2_bmp;
-BITMAP *devil_left_shot3_bmp;
-BITMAP *devil_right_shot1_bmp;
-BITMAP *devil_right_shot2_bmp;
-BITMAP *devil_right_shot3_bmp;
-BITMAP *devil_right_bmp;
-BITMAP *devil_up_bmp;
-BITMAP *devil_down_bmp;
-BITMAP *devil_stop_bmp;
-BITMAP *devil_wait_bmp;
+BITMAP *devil_stand_left_shot1_bmp;
+BITMAP *devil_stand_left_shot2_bmp;
+BITMAP *devil_stand_left_shot3_bmp;
+BITMAP *devil_stand_right_shot1_bmp;
+BITMAP *devil_stand_right_shot2_bmp;
+BITMAP *devil_stand_right_shot3_bmp;
+BITMAP *devil_stand_big_shot1_bmp;
+BITMAP *devil_stand_big_shot2_bmp;
+BITMAP *devil_stand_big_shot3_bmp;
+BITMAP *devil_fly_right_bmp;
+BITMAP *devil_fly_up_bmp;
+BITMAP *devil_fly_down_bmp;
+BITMAP *devil_fly_stop_bmp;
+BITMAP *devil_floating_wait_bmp;
+BITMAP *devil_floating_hit_bmp;
+BITMAP *devil_landing_bmp;
+
+BITMAP *angels_floating_bmp;
+BITMAP *angels_fly_down_bmp;
+BITMAP *angels_fly_up_bmp;
+BITMAP *angels_fly_cover_bmp;
+BITMAP *angels_fly_hit1_bmp;
+BITMAP *angels_fly_hit2_bmp;
+BITMAP *angels_fly_hit3_bmp;
+BITMAP *angels_fly_kick_bmp;
+BITMAP *angels_fly_shoot_right_bmp;
+BITMAP *angels_fly_shoot_diagonal_bmp;
+BITMAP *angels_fly_shoot_down_bmp;
 
 
 bool load_media()
 {
-  char exe[1024], buf[1024];
-
-  get_executable_name(exe, sizeof(exe));
-  replace_filename(buf, exe, "media/bedevil.dat", sizeof(buf));
+  std::string filename = redir("media/defnot.dat");
 
   // load the palette of color
-  media = load_datafile_object(buf, "PALETTE_PCX");
+  media = load_datafile_object(filename.c_str(), "PALETTE_PCX");
   if (!media)
     return false;
   set_palette(reinterpret_cast<RGB *>(media->dat));
 
   // load all data
-  media = load_datafile(buf);
+  media = load_datafile(filename.c_str());
   if (!media)
     return false;
 
+  // trim devil bitmap
+
+#undef SUB
 #define SUB(x,y)						\
   create_sub_bitmap(MEDIA_BITMAP(DEVIL_PCX), x*32, y*36, 32, 36)
 
-  devil_stand_bmp       = SUB(0, 0);
-  devil_left_shot1_bmp  = SUB(1, 0);
-  devil_left_shot2_bmp  = SUB(2, 0);
-  devil_left_shot3_bmp  = SUB(3, 0);
-  devil_right_shot1_bmp = SUB(4, 0);
-  devil_right_shot2_bmp = SUB(5, 0);
-  devil_right_shot3_bmp = SUB(6, 0);
-  devil_right_bmp       = SUB(0, 1);
-  devil_up_bmp          = SUB(0, 2);
-  devil_down_bmp        = SUB(0, 3);
-  devil_stop_bmp        = SUB(0, 4);
-  devil_wait_bmp        = SUB(1, 4);
+  devil_floating_bmp   	       	 = SUB(0, 0);
+  devil_floating_left_shot1_bmp	 = SUB(1, 0);
+  devil_floating_left_shot2_bmp	 = SUB(2, 0);
+  devil_floating_left_shot3_bmp	 = SUB(3, 0);
+  devil_floating_right_shot1_bmp = SUB(4, 0);
+  devil_floating_right_shot2_bmp = SUB(5, 0);
+  devil_floating_right_shot3_bmp = SUB(6, 0);
+  devil_floating_big_shot1_bmp 	 = SUB(7, 0);
+  devil_floating_big_shot2_bmp 	 = SUB(8, 0);
+  devil_floating_big_shot3_bmp 	 = SUB(9, 0);
+  devil_stand_bmp      	       	 = SUB(0, 1);
+  devil_stand_left_shot1_bmp   	 = SUB(1, 1);
+  devil_stand_left_shot2_bmp   	 = SUB(2, 1);
+  devil_stand_left_shot3_bmp   	 = SUB(3, 1);
+  devil_stand_right_shot1_bmp  	 = SUB(4, 1);
+  devil_stand_right_shot2_bmp  	 = SUB(5, 1);
+  devil_stand_right_shot3_bmp  	 = SUB(6, 1);
+  devil_stand_big_shot1_bmp    	 = SUB(7, 1);
+  devil_stand_big_shot2_bmp    	 = SUB(8, 1);
+  devil_stand_big_shot3_bmp    	 = SUB(9, 1);
+  devil_fly_right_bmp  	       	 = SUB(0, 2);
+  devil_fly_up_bmp     	       	 = SUB(1, 2);
+  devil_fly_down_bmp   	       	 = SUB(2, 2);
+  devil_fly_stop_bmp   	       	 = SUB(3, 2);
+  devil_floating_wait_bmp        = SUB(4, 2);
+  devil_floating_hit_bmp         = SUB(5, 2);
+  devil_landing_bmp    	       	 = SUB(6, 2);
 
-//   create_color_tables();
+  // trim angels bitmap
+
+#undef SUB
+#define SUB(x,y)							\
+  create_sub_bitmap(MEDIA_BITMAP(ANGELS_PCX), x*32, y*36, 32, 36)
+
+  angels_floating_bmp  	       	 = SUB(0, 0);
+  angels_fly_down_bmp  	       	 = SUB(1, 0);
+  angels_fly_up_bmp    	       	 = SUB(2, 0);
+  angels_fly_cover_bmp 	       	 = SUB(3, 0);
+  angels_fly_hit1_bmp  	       	 = SUB(4, 0);
+  angels_fly_hit2_bmp  	       	 = SUB(5, 0);
+  angels_fly_hit3_bmp  	       	 = SUB(6, 0);
+  angels_fly_kick_bmp  	       	 = SUB(7, 0);
+  angels_fly_shoot_right_bmp   	 = SUB(8, 0);
+  angels_fly_shoot_diagonal_bmp	 = SUB(9, 0);
+  angels_fly_shoot_down_bmp    	 = SUB(10, 0);
 
   return true;
 }

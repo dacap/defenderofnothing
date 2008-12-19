@@ -45,7 +45,7 @@ endif
 
 
 ifndef NAME
-	NAME = bedevil
+	NAME = defnot
 endif
 
 # ifndef WINDOWS
@@ -114,3 +114,8 @@ endif
 
 veryclean: clean
 	-$(RM) $(BIN)
+
+depend:
+	gcc -MM $(CFLAGS) src/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)|obj/\1|' > makefile.dep
+
+-include makefile.dep

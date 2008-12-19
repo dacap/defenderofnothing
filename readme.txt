@@ -1,13 +1,13 @@
-Bedevil, SpeedHack 2007
+Defender Of Nothing, SpeedHack 2007
 by David A. Capello
 
-Website: www.davidcapello.com.ar/bedevil
+Website: www.davidcapello.com.ar/defnot
 
 
  Tools and Libraries Used
 -----------------------------------------------------------------------
 
- Compiler/IDE: Emacs, MinGW, make
+ Compiler/IDE: Emacs, MinGW (GCC), make
 
  Platform: Windows
 
@@ -37,8 +37,8 @@ your project.
     The friction of the cars with the floor. And when you smash angels
     on the street.
   * Ratio, Respect!
-    The game support widescreen resolution by default and can be
-    configured (through Setup menu) to use a fullscreen mode.
+    The game support widescreen resolution and a square aspect one, to
+    switch one to another press F11.
   * Reverse Stereotypes:
     Angels that want to kill people to send them to heaven because
     the Heaven is getting empty.

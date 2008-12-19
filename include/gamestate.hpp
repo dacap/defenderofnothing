@@ -7,7 +7,7 @@ class GameState
 {
 public:
   GameState();
-  virtual ~GameState() = 0;
+  virtual ~GameState();
 
   // update the logic of the game and returns the new (or this) state
   // note: you can return NULL if the game ends completelly (e.g. return to OS)

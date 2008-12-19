@@ -1,4 +1,38 @@
-2007-09-15  David A. Capello  <dacap@users.sourceforge.net>  1:59 a.m.
+2007-09-16  David A. Capello  <dacap@users.sourceforge.net>  11:01 a.m.
+
+	* Let's make some AI.
+	* Renamed "bedevil" -> "defnot"
+
+2007-09-16  David A. Capello  <dacap@users.sourceforge.net>  02:06 a.m.
+
+	* src/angel.cpp: Added the wings to the angel.
+
+2007-09-16  David A. Capello  <dacap@users.sourceforge.net>  01:10 a.m.
+
+	* src/scorer.cpp, src/angel.cpp: Added the graphics of the angels
+	and the minimap in "scorer".
+
+	* src/object.cpp: A little more of abstraction.
+
+2007-09-15  David A. Capello  <dacap@users.sourceforge.net>  08:39 p.m.
+
+	* src/person.cpp: The animation is done. Let's start with the
+	scorer and graphics of angels.
+
+2007-09-15  David A. Capello  <dacap@users.sourceforge.net>  07:39 p.m.
+
+	* src/person.cpp: Added people.
+
+2007-09-15  David A. Capello  <dacap@users.sourceforge.net>  04:27 p.m.
+
+	* src/particle.cpp: Added particle system and fire to the player.
+
+2007-09-15  David A. Capello  <dacap@users.sourceforge.net>  12:16 p.m.
+
+	* Added tiles and better graphics (devil with two colors).
+        * Blackout here in Santa Fe (some minutes only...).
+
+2007-09-15  David A. Capello  <dacap@users.sourceforge.net>  01:59 a.m.
 
 	* src/media.cpp, media/bedevil.dat, src/player.cpp: Drawn the main
 	character, with movements to all sides and a couple of "fire"
@@ -11,7 +45,7 @@
 	reutilized from other project (http://vaca.sourceforge.net/) is
 	vector2d. All the "look-at" and scroll movement was made.
 
-2007-09-14  David A. Capello  <dacap@users.sourceforge.net>  4:13 p.m.
+2007-09-14  David A. Capello  <dacap@users.sourceforge.net>  04:13 p.m.
 
 	* src/main.cpp (game_loop): Done the main game loop. And the base
 	classes: Game, GameState, Control. I'm very happy: I didn't make

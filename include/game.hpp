@@ -24,6 +24,8 @@ public:
 
   bool update();
   void draw(BITMAP *bmp);
+
+  GameState *get_state();
 };
 
 

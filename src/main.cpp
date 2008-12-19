@@ -1,7 +1,10 @@
+#include <cstdlib>
+#include <ctime>
 #include <allegro.h>
 #include "game.hpp"
 #include "media.hpp"
 #include "input.hpp"
+#include "util.hpp"
 
 
 //////////////////////////////////////////////////////////////////////
@@ -35,13 +38,17 @@ static void game_loop();
 
 int main()
 {
+  std::srand(std::time(NULL));
+
   allegro_init();
   install_timer();
   install_keyboard();
-  install_mouse();
+//   install_mouse();
   install_joystick(JOY_TYPE_AUTODETECT);
 
-  if (!setup_gfx()) {
+  override_config_file(redir("defnot.ini").c_str());
+
+  if (!setup_gfx(get_config_int("Game", "Widescreen", 0) != 0)) {
     allegro_message("Unable to setup the graphics mode\n");
     return 1;
   }
@@ -72,6 +79,8 @@ int main()
 
   // play the game
   game_loop();
+
+  set_config_int("Game", "Widescreen", GFX_W == 360);
   
   remove_int(timer_control);
   allegro_exit();
@@ -103,16 +112,33 @@ static void game_loop()
     }
     the_game->draw(buffer);
 
+    // flip to screen (double buffering technique)
+    vsync();
+    stretch_blit(buffer, screen, 0, 0, GFX_W, GFX_H, 0, 0, SCREEN_W, SCREEN_H);
+
+    // screen shot
     if (key[KEY_F12]) {
+      int old_beats = beats;
       make_screenshot(buffer);
       do {
 	poll_keyboard();
       } while (key[KEY_F12]);
+      beats = old_beats;
     }
 
-    // flip to screen (double buffering technique)
-    vsync();
-    stretch_blit(buffer, screen, 0, 0, GFX_W, GFX_H, 0, 0, SCREEN_W, SCREEN_H);
+    // switch graphics mode
+    if (key[KEY_F11]) {
+      int old_beats = beats;
+      switch_gfx_mode();
+
+      destroy_bitmap(buffer);
+      buffer = create_bitmap(GFX_W, GFX_H);
+
+      do {
+	poll_keyboard();
+      } while (key[KEY_F11]);
+      beats = old_beats;
+    }
   }
 
   // destroy the game

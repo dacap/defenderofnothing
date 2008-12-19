@@ -56,3 +56,10 @@ void Game::draw(BITMAP *bmp)
   if (m_state != NULL)
     m_state->draw(bmp);
 }
+
+
+GameState *Game::get_state()
+{
+  return m_state;
+}
+

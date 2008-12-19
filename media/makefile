@@ -1,6 +1,6 @@
 DAT = C:/MinGW/allegsvn/4.2/tools/dat.exe
 
-DATAFILE = bedevil.dat
+DATAFILE = defnot.dat
 HEADFILE = ../include/ids.h
 
 all:

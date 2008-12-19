@@ -1,15 +1,13 @@
 #include <allegro.h>
 #include "gfx.hpp"
+#include "util.hpp"
 
 
-// #define TRANS_TABLES	5
-
-
-// static COLOR_MAP *trans_table[TRANS_TABLES];
+int _gfx_w;
 
 
 // changes to some widescreen or fullscreen mode
-bool setup_gfx()
+bool setup_gfx(bool widescreen)
 {
   int dsk_w, dsk_h;
   int w = 720;
@@ -33,52 +31,51 @@ bool setup_gfx()
 
   set_color_depth(bpp);
 
-  // widescreen window
-  if (set_gfx_mode(GFX_AUTODETECT_WINDOWED, w, h, 0, 0) < 0) {
-    // fullscreen
-    if (set_gfx_mode(GFX_AUTODETECT, 320, 240, 0, 0) < 0)
-      if (set_gfx_mode(GFX_AUTODETECT, 640, 480, 0, 0) < 0) {
+  // widescreen
+  if (widescreen) {
+    if (set_gfx_mode(GFX_AUTODETECT_WINDOWED, w, h, 0, 0) == 0 ||
+	set_gfx_mode(GFX_AUTODETECT_FULLSCREEN, w, h, 0, 0) == 0) {
+      _gfx_w = 360;
+      return true;
+    }
+  }
+
+  // fullscreen
+  if (set_gfx_mode(GFX_AUTODETECT_WINDOWED, 640, 480, 0, 0) < 0)
+    if (set_gfx_mode(GFX_AUTODETECT, 640, 480, 0, 0) < 0)
+      if (set_gfx_mode(GFX_AUTODETECT, 320, 240, 0, 0) < 0) {
 	// error, no graphics mode
 	return false;
       }
-  }
+
+  _gfx_w = 320;
 
   // success
   return true;
 }
 
 
-// void create_color_tables()
-// {
-//   PALETTE pal;
-//   get_palette(pal);
-
-//   // create color maps
-//   rgb_map = new RGB_MAP;
-//   create_rgb_table(rgb_map, pal, NULL);
-
-//   for (int c=0; c<TRANS_TABLES; ++c) {
-//     int g = c;
-
-//     trans_table[c] = new COLOR_MAP;
-//     create_trans_table(trans_table[c], pal, g, g, g, NULL);
-//   }
-// }
+void switch_gfx_mode()
+{
+  if (_gfx_w == 360)
+    setup_gfx(false);
+  else
+    setup_gfx(true);
+}
 
 
 void make_screenshot(BITMAP *bmp)
 {
-  char exe[1024], name[1024], buf[1024];
-
-  get_executable_name(exe, sizeof(exe));
+  std::string filename;
+  char buf[1024];
 
   for (int c=0; c<10000; ++c) {
-    sprintf(name, "shot%04d.bmp", c);
-    replace_filename(buf, exe, name, sizeof(buf));
-    if (!exists(buf)) {
+    sprintf(buf, "shot%04d.bmp", c);
+    filename = redir(buf);
+    if (!exists(filename.c_str())) {
       PALETTE pal;
       get_palette(pal);
-      save_bitmap(buf, bmp, pal);
+      save_bitmap(filename.c_str(), bmp, pal);
       break;
     }
   }
@@ -87,21 +84,39 @@ void make_screenshot(BITMAP *bmp)
 
 void trans_mode(int a)
 {
-//   if (bitmap_color_depth(screen) > 8) {
-    drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
-    set_trans_blender(0, 0, 0, a);
-//   }
-//   else {
-//     // TODO
-//   }
+  drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
+  set_trans_blender(0, 0, 0, a);
 }
+
 
 void lit_mode(int r, int g, int b)
 {
-//   if (bitmap_color_depth(screen) > 8) {
-    set_trans_blender(r, g, b, 0);
-//   }
-//   else {
-//     // TODO
-//   }
+  set_trans_blender(r, g, b, 0);
+}
+
+
+int blend_color(int from, int to, double t)
+{
+  int r = getr(from) + (getr(to) - getr(from)) * t;
+  int g = getg(from) + (getg(to) - getg(from)) * t;
+  int b = getb(from) + (getb(to) - getb(from)) * t;
+  int a = geta(from) + (geta(to) - geta(from)) * t;
+  return makeacol(MID(0, r, 255),
+		  MID(0, g, 255),
+		  MID(0, b, 255),
+		  MID(0, a, 255));
+}
+
+
+void draw_text(BITMAP *bmp, int x, int y, int color, const char *format, ...)
+{
+  char buf[512];
+  va_list ap;
+
+  va_start(ap, format);
+  uvszprintf(buf, sizeof(buf), format, ap);
+  va_end(ap);
+
+  textout_ex(bmp, font, buf, x, y+1, blend_color(color, makecol(0, 0, 0), 0.5), -1);
+  textout_ex(bmp, font, buf, x, y, color, -1);
 }

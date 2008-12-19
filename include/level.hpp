@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include "object.hpp"
 #include "vector2d.hpp"
 
 
@@ -54,18 +55,17 @@ enum Tile {
 };
 
 
-class GamePlay;
-
-
 // a position of the level is modeled in this way:
 //   (0,0) is the origin of the first tile
 //   (1,0) is the origin of the next tile
 //   (m_w-0.01, m_h-0.01) is the right-bottom corner of the last tile
 //   all the level is repeated horizontally
-class Level
+class Level : public Object
 {
-  GamePlay *m_gameplay;
+  // general level information
   int m_num;
+
+  // level tiles
   int m_w, m_h;
   std::vector<Tile> m_tiles_bg;
   std::vector<Tile> m_tiles_fg;
@@ -80,25 +80,38 @@ class Level
   vector2d m_look_to;
   int m_look_time;
 
+  // angels generator
+  double m_level_angel_interval; // in seconds
+  int m_last_angel_time;
+
 public:
-  Level(GamePlay *gameplay, int num);
+  Level(int num);
   virtual ~Level();
 
-  void update();
-  void draw(BITMAP *bmp);
+  virtual void update();
+  virtual void draw(BITMAP *bmp);
 
-//   int get_w();
+  int get_w();
   int get_h();
-//   vector2d get_center();
+
   vector2d get_start_pos();
+  vector2d get_random_pos_for_people();
+  vector2d get_random_pos_for_angel();
+  
   void look_at(vector2d center);
   void to_screen(vector2d pos, int &x, int &y);
+
+  bool touch_floor(vector2d pos);
+  bool touch_wall(vector2d pos);
+  vector2d get_stand_point(vector2d pos);
 
 private:
   void set_scroll(vector2d pos);
   void get_first_visible_tile(int &x, int &y);
   void set_tiles_size(int w, int h);
-  void draw_tile(BITMAP *bmp, Tile tile, int x, int y);
+  static void draw_tile(BITMAP *bmp, Tile tile, int x, int y);
+  static bool tile_is_floor(Tile tile);
+  static bool tile_is_touchable(Tile tile);
 };
 
 
