@@ -1,33 +1,8 @@
 // Defender Of Nothing
 // Copyright (C) 2007 by David Capello
-// All rights reserved.
 //
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions
-// are met:
-//
-// * Redistributions of source code must retain the above copyright
-//   notice, this list of conditions and the following disclaimer.
-// * Redistributions in binary form must reproduce the above copyright
-//   notice, this list of conditions and the following disclaimer in
-//   the documentation and/or other materials provided with the
-//   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
-//   may be used to endorse or promote products derived from this
-//   software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-// COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-// OF THE POSSIBILITY OF SUCH DAMAGE.
+// This file is released under the terms of the MIT license.
+// Read LICENSE.txt for more information.
 
 #include <allegro.h>
 #include <assert.h>
@@ -171,7 +146,7 @@ void Angel::update()
       m_vel = vector2d(rand_range(-2, 2), -8);
     }
   }
-  
+
   // can this angel abduct the target person?
   if (m_target != NULL) {
     double d = level()->get_max_distance_to_abduct();
@@ -367,7 +342,7 @@ void Angel::get_sprites(Sprite *&sprite, Sprite *&wings_sprite)
   int anilength = (WINGS11_PCX - WINGS00_PCX + 1);
   double t = (GAME_T - m_wing_time) / WING_CYCLE_DURATION;
   int c = static_cast<int>(t * anilength) % anilength;
-  
+
   wings_bmp = MEDIA_BITMAP(WINGS00_PCX+c);
 
   u = sprite->x + sprite->flip_x(12) + (sprite->h_flip ? -wings_bmp->w+38: -38);
@@ -411,7 +386,7 @@ Person *Angel::find_target_person()
 {
   Person *target = NULL;
   double target_dist = 1000.0;
-  
+
   const ObjectList& people = GAMEPLAY->get_people();
   ObjectList::const_iterator it;
   for (it = people.begin(); it != people.end(); ++it) {
