@@ -1,7 +1,7 @@
 Defender Of Nothing, SpeedHack 2007
 by David Capello
 
-Website: http://www.davidcapello.com.ar/defnot/
+Website: http://davidcapello.com/games/defender-of-nothing/
 
 This game is INCOMPLETE
 
